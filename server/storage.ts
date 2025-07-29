@@ -1,4 +1,4 @@
-import { videos, categories, videoStats, type Video, type Category, type VideoStats, type InsertVideo, type InsertCategory, type InsertVideoStats, type VideoWithStats, type User, type InsertUser } from "@shared/schema";
+import { users, videos, categories, videoStats, type Video, type Category, type VideoStats, type InsertVideo, type InsertCategory, type InsertVideoStats, type VideoWithStats, type User, type InsertUser } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, and, inArray } from "drizzle-orm";
 import { randomUUID } from "crypto";
@@ -23,6 +23,7 @@ export interface IStorage {
   getCategoryByName(name: string): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
   updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined>;
+  deleteCategory(id: string): Promise<boolean>;
 
   // Stats methods
   getVideoStats(videoId: string): Promise<VideoStats | undefined>;
@@ -138,7 +139,7 @@ export class DatabaseStorage implements IStorage {
       .update(videos)
       .set({ isActive: false })
       .where(eq(videos.id, id));
-    return result.rowCount > 0;
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   // Category methods
@@ -166,6 +167,13 @@ export class DatabaseStorage implements IStorage {
       .where(eq(categories.id, id))
       .returning();
     return updatedCategory || undefined;
+  }
+
+  async deleteCategory(id: string): Promise<boolean> {
+    const result = await db
+      .delete(categories)
+      .where(eq(categories.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   // Stats methods

@@ -16,9 +16,9 @@ const languageOptions = [
 ];
 
 const navigationItems = [
-  { key: 'dashboard', href: '#', active: true },
+  { key: 'dashboard', href: '/', active: true },
   { key: 'browse', href: '#', active: false },
-  { key: 'categories', href: '#', active: false },
+  { key: 'categories', href: '/categories', active: false },
   { key: 'favorites', href: '#', active: false },
 ];
 

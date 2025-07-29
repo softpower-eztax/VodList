@@ -133,6 +133,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update category
+  app.patch("/api/categories/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const validatedData = insertCategorySchema.partial().parse(req.body);
+      const category = await storage.updateCategory(id, validatedData);
+      if (!category) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      res.json(category);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid category data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update category" });
+    }
+  });
+
+  // Delete category
+  app.delete("/api/categories/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.deleteCategory(id);
+      if (!success) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete category" });
+    }
+  });
+
   // Get dashboard stats
   app.get("/api/stats/dashboard", async (req, res) => {
     try {
