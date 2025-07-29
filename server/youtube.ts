@@ -1,7 +1,88 @@
 import { storage } from "./storage";
 import { type InsertVideo, type Category } from "@shared/schema";
 
-// Sample YouTube video data based on spiritual content categories
+interface YouTubeVideo {
+  id: { videoId: string };
+  snippet: {
+    title: string;
+    description: string;
+    thumbnails: {
+      high: { url: string };
+      maxres?: { url: string };
+    };
+    publishedAt: string;
+    channelTitle: string;
+  };
+  contentDetails?: {
+    duration: string;
+  };
+}
+
+interface YouTubeSearchResponse {
+  items: YouTubeVideo[];
+}
+
+// Convert ISO 8601 duration to human readable format
+function parseDuration(duration: string): string {
+  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+  if (!match) return "0:00";
+  
+  const hours = parseInt(match[1]?.replace('H', '') || '0');
+  const minutes = parseInt(match[2]?.replace('M', '') || '0');
+  const seconds = parseInt(match[3]?.replace('S', '') || '0');
+  
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+async function searchYouTubeVideos(query: string, maxResults: number = 10): Promise<YouTubeVideo[]> {
+  const API_KEY = process.env.YOUTUBE_API_KEY;
+  if (!API_KEY) {
+    throw new Error('YouTube API key not found');
+  }
+
+  try {
+    // Search for videos
+    const searchUrl = `https://www.googleapis.com/youtube/v3/search?` +
+      `part=snippet&type=video&q=${encodeURIComponent(query)}&` +
+      `maxResults=${maxResults}&order=relevance&` +
+      `safeSearch=strict&regionCode=US&relevanceLanguage=en&` +
+      `key=${API_KEY}`;
+
+    const searchResponse = await fetch(searchUrl);
+    if (!searchResponse.ok) {
+      throw new Error(`YouTube search failed: ${searchResponse.statusText}`);
+    }
+
+    const searchData: YouTubeSearchResponse = await searchResponse.json();
+    
+    // Get video details including duration
+    const videoIds = searchData.items.map(item => item.id.videoId).join(',');
+    const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?` +
+      `part=contentDetails&id=${videoIds}&key=${API_KEY}`;
+
+    const detailsResponse = await fetch(detailsUrl);
+    if (!detailsResponse.ok) {
+      throw new Error(`YouTube details failed: ${detailsResponse.statusText}`);
+    }
+
+    const detailsData = await detailsResponse.json();
+    
+    // Merge search results with details
+    return searchData.items.map((video, index) => ({
+      ...video,
+      contentDetails: detailsData.items[index]?.contentDetails
+    }));
+
+  } catch (error) {
+    console.error('Error fetching from YouTube:', error);
+    throw error;
+  }
+}
+
+// Fallback sample data in case YouTube API fails
 const sampleYouTubeVideos = {
   music: [
     {
@@ -158,31 +239,31 @@ export async function populateVideosFromYouTube(): Promise<void> {
       }
 
       const categoryName = category.name.toLowerCase();
-      const videosForCategory = sampleYouTubeVideos[categoryName as keyof typeof sampleYouTubeVideos];
       
-      if (videosForCategory) {
-        for (const videoData of videosForCategory) {
-          // Check if video keywords match any category keywords
-          const hasMatchingKeyword = videoData.keywords.some(videoKeyword =>
-            category.keywords!.some(categoryKeyword =>
-              videoKeyword.toLowerCase().includes(categoryKeyword.toLowerCase()) ||
-              categoryKeyword.toLowerCase().includes(videoKeyword.toLowerCase())
-            )
-          );
+      // Create search query from category keywords
+      const searchQuery = category.keywords.join(' ') + ` ${categoryName} spiritual christian`;
+      console.log(`🔍 Searching YouTube for: "${searchQuery}" in category "${category.name}"`);
 
-          if (!hasMatchingKeyword) {
-            console.log(`⏭️  Skipping video "${videoData.title}" - no matching keywords with category "${category.name}"`);
-            continue;
-          }
-
+      try {
+        // Search YouTube for videos matching keywords
+        const youtubeVideos = await searchYouTubeVideos(searchQuery, 8);
+        
+        let addedCount = 0;
+        for (const video of youtubeVideos) {
           // Check if video already exists
           const existingVideos = await storage.getVideosByCategory(categoryName);
-          const exists = existingVideos.some(v => v.youtubeId === videoData.youtubeId);
+          const exists = existingVideos.some(v => v.youtubeId === video.id.videoId);
           
           if (!exists) {
             const insertVideo: InsertVideo = {
-              ...videoData,
-              category: categoryName
+              title: video.snippet.title,
+              description: video.snippet.description?.substring(0, 500) || '',
+              youtubeId: video.id.videoId,
+              thumbnailUrl: video.snippet.thumbnails.maxres?.url || video.snippet.thumbnails.high.url,
+              duration: video.contentDetails ? parseDuration(video.contentDetails.duration) : '0:00',
+              category: categoryName,
+              keywords: category.keywords,
+              publishedAt: new Date(video.snippet.publishedAt)
             };
             
             const createdVideo = await storage.createVideo(insertVideo);
@@ -195,17 +276,50 @@ export async function populateVideosFromYouTube(): Promise<void> {
               monthlyViews: Math.floor(Math.random() * 2000) + 200,
             });
             
-            console.log(`✅ Added video "${videoData.title}" to category "${category.name}" (matched keywords: ${videoData.keywords.join(', ')})`);
+            addedCount++;
+            console.log(`✅ Added YouTube video "${video.snippet.title}" to category "${category.name}"`);
           } else {
-            console.log(`⏭️  Video "${videoData.title}" already exists in category "${category.name}"`);
+            console.log(`⏭️  Video "${video.snippet.title}" already exists in category "${category.name}"`);
           }
         }
-      } else {
-        console.log(`⚠️  No sample videos available for category "${category.name}"`);
+        
+        console.log(`📊 Added ${addedCount} new videos to category "${category.name}"`);
+        
+      } catch (youtubeError) {
+        console.error(`❌ YouTube API error for category "${category.name}":`, youtubeError);
+        
+        // Fallback to sample videos if YouTube API fails
+        console.log(`🔄 Falling back to sample videos for category "${category.name}"`);
+        const videosForCategory = sampleYouTubeVideos[categoryName as keyof typeof sampleYouTubeVideos];
+        
+        if (videosForCategory) {
+          for (const videoData of videosForCategory.slice(0, 3)) {
+            const existingVideos = await storage.getVideosByCategory(categoryName);
+            const exists = existingVideos.some(v => v.youtubeId === videoData.youtubeId);
+            
+            if (!exists) {
+              const insertVideo: InsertVideo = {
+                ...videoData,
+                category: categoryName
+              };
+              
+              const createdVideo = await storage.createVideo(insertVideo);
+              
+              await storage.createVideoStats({
+                videoId: createdVideo.id,
+                totalViews: Math.floor(Math.random() * 10000) + 1000,
+                weeklyViews: Math.floor(Math.random() * 500) + 50,
+                monthlyViews: Math.floor(Math.random() * 2000) + 200,
+              });
+              
+              console.log(`✅ Added fallback video "${videoData.title}" to category "${category.name}"`);
+            }
+          }
+        }
       }
     }
     
-    console.log('✅ Videos populated from YouTube data based on category keywords');
+    console.log('✅ Videos populated from YouTube API based on category keywords');
   } catch (error) {
     console.error('❌ Error populating videos:', error);
   }
