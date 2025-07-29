@@ -229,10 +229,13 @@ const sampleYouTubeVideos = {
 
 export async function populateVideosFromYouTube(): Promise<void> {
   try {
-    // Get all categories with their keywords
+    // Get fresh categories with their current keywords from database
     const categories = await storage.getCategories();
+    console.log(`📋 Fetching fresh categories from database... Found ${categories.length} categories`);
     
     for (const category of categories) {
+      console.log(`🏷️  Category "${category.name}": keywords = [${category.keywords?.join(', ') || 'none'}]`);
+      
       if (!category.keywords || category.keywords.length === 0) {
         console.log(`⚠️  Skipping category "${category.name}" - no keywords defined`);
         continue;
