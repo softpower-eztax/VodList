@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import CategoryTabs from "@/components/CategoryTabs";
 import StatsCards from "@/components/StatsCards";
 import VideoCard from "@/components/VideoCard";
+import VideoPopulator from "@/components/VideoPopulator";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -95,6 +96,9 @@ export default function Dashboard() {
           onCategoryChange={setActiveCategory}
           language={language}
         />
+
+        {/* Video Populator */}
+        <VideoPopulator language={language} />
 
         {/* Stats Cards */}
         {stats && !statsLoading && (

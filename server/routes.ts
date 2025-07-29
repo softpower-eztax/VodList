@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertVideoSchema, insertCategorySchema, insertVideoStatsSchema } from "@shared/schema";
+import { populateVideosFromYouTube, refreshVideoStats } from "./youtube";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -204,6 +205,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid stats data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to update video stats" });
+    }
+  });
+
+  // Populate videos from YouTube
+  app.post("/api/videos/populate", async (req, res) => {
+    try {
+      await populateVideosFromYouTube();
+      res.json({ message: "Videos populated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to populate videos" });
+    }
+  });
+
+  // Refresh video stats
+  app.post("/api/videos/refresh-stats", async (req, res) => {
+    try {
+      await refreshVideoStats();
+      res.json({ message: "Video stats refreshed successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to refresh video stats" });
     }
   });
 
