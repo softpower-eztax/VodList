@@ -16,6 +16,11 @@ interface YouTubeVideo {
   contentDetails?: {
     duration: string;
   };
+  statistics?: {
+    viewCount: string;
+    likeCount: string;
+    commentCount: string;
+  };
 }
 
 interface YouTubeSearchResponse {
@@ -58,10 +63,10 @@ async function searchYouTubeVideos(query: string, maxResults: number = 10): Prom
 
     const searchData: YouTubeSearchResponse = await searchResponse.json();
     
-    // Get video details including duration
+    // Get video details including duration and statistics (view counts)
     const videoIds = searchData.items.map(item => item.id.videoId).join(',');
     const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?` +
-      `part=contentDetails&id=${videoIds}&key=${API_KEY}`;
+      `part=contentDetails,statistics&id=${videoIds}&key=${API_KEY}`;
 
     const detailsResponse = await fetch(detailsUrl);
     if (!detailsResponse.ok) {
@@ -70,10 +75,11 @@ async function searchYouTubeVideos(query: string, maxResults: number = 10): Prom
 
     const detailsData = await detailsResponse.json();
     
-    // Merge search results with details
+    // Merge search results with details and statistics
     return searchData.items.map((video, index) => ({
       ...video,
-      contentDetails: detailsData.items[index]?.contentDetails
+      contentDetails: detailsData.items[index]?.contentDetails,
+      statistics: detailsData.items[index]?.statistics
     }));
 
   } catch (error) {
@@ -271,12 +277,13 @@ export async function populateVideosFromYouTube(): Promise<void> {
             
             const createdVideo = await storage.createVideo(insertVideo);
             
-            // Create initial stats for the video
+            // Create initial stats using real YouTube view count
+            const realViewCount = parseInt(video.statistics?.viewCount || '0');
             await storage.createVideoStats({
               videoId: createdVideo.id,
-              totalViews: Math.floor(Math.random() * 10000) + 1000,
-              weeklyViews: Math.floor(Math.random() * 500) + 50,
-              monthlyViews: Math.floor(Math.random() * 2000) + 200,
+              totalViews: realViewCount,
+              weeklyViews: Math.floor(realViewCount * 0.1), // Estimate 10% of total as weekly
+              monthlyViews: Math.floor(realViewCount * 0.3), // Estimate 30% of total as monthly
             });
             
             addedCount++;
