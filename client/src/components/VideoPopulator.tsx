@@ -84,8 +84,8 @@ export default function VideoPopulator({ language }: VideoPopulatorProps) {
         </div>
         
         <p className="text-sm text-gray-600 mt-3">
-          Click "Populate Videos" to search YouTube for videos that contain ALL keywords from each category. 
-          Only videos matching every keyword in a category will be added (AND condition, not OR).
+          Click "Populate Videos" to search YouTube using only your exact category keywords. 
+          Search uses AND logic - videos must contain ALL keywords from each category.
         </p>
       </CardContent>
     </Card>

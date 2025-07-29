@@ -240,10 +240,9 @@ export async function populateVideosFromYouTube(): Promise<void> {
 
       const categoryName = category.name.toLowerCase();
       
-      // Create search query from category keywords (AND condition)
-      // For YouTube search to require ALL keywords, we need to use + prefix or quotes
-      const searchQuery = category.keywords.map(keyword => `+${keyword}`).join(' ') + ` +${categoryName} +spiritual +christian`;
-      console.log(`🔍 Searching YouTube requiring ALL keywords: "${searchQuery}" in category "${category.name}"`);
+      // Create search query using ONLY the category keywords (AND condition)
+      const searchQuery = category.keywords.map(keyword => `+${keyword}`).join(' ');
+      console.log(`🔍 Searching YouTube for exact keywords: "${searchQuery}" in category "${category.name}"`);
 
       try {
         // Search YouTube for videos matching keywords
