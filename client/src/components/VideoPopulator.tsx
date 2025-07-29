@@ -84,8 +84,8 @@ export default function VideoPopulator({ language }: VideoPopulatorProps) {
         </div>
         
         <p className="text-sm text-gray-600 mt-3">
-          Click "Populate Videos" to search YouTube for real videos matching your category keywords. 
-          The system will search YouTube using your keywords and add relevant spiritual content to each category.
+          Click "Populate Videos" to search YouTube for videos that contain ALL keywords from each category. 
+          Only videos matching every keyword in a category will be added (AND condition, not OR).
         </p>
       </CardContent>
     </Card>
