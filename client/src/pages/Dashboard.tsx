@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function Dashboard() {
   const [language, setLanguage] = useState<Language>('en');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('music');
   const [sortBy, setSortBy] = useState('popular');
 
   // Fetch dashboard stats
@@ -27,7 +27,7 @@ export default function Dashboard() {
 
   // Fetch videos based on active category
   const { data: videos, isLoading: videosLoading } = useQuery({
-    queryKey: activeCategory === 'all' ? ['/api/videos/top'] : ['/api/videos/top', activeCategory],
+    queryKey: ['/api/videos/top', activeCategory],
     select: (data: VideoWithStats[]) => {
       if (!data) return [];
       
@@ -120,7 +120,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-dark">
-              {getTranslation('top_videos_title', language)}
+              {getTranslation('top_videos_title', language)} - {getTranslation(activeCategory, language)}
             </h2>
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600">

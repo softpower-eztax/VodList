@@ -8,7 +8,6 @@ interface CategoryTabsProps {
 }
 
 const categories = [
-  { key: 'all', icon: TrendingUp, translationKey: 'all_categories' },
   { key: 'music', icon: Music, translationKey: 'music' },
   { key: 'sermon', icon: Cross, translationKey: 'sermons' },
   { key: 'other', icon: Video, translationKey: 'other' },
