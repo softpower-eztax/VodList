@@ -298,35 +298,7 @@ export async function populateVideosFromYouTube(): Promise<void> {
         
       } catch (youtubeError) {
         console.error(`❌ YouTube API error for category "${category.name}":`, youtubeError);
-        
-        // Fallback to sample videos if YouTube API fails
-        console.log(`🔄 Falling back to sample videos for category "${category.name}"`);
-        const videosForCategory = sampleYouTubeVideos[categoryName as keyof typeof sampleYouTubeVideos];
-        
-        if (videosForCategory) {
-          for (const videoData of videosForCategory.slice(0, 3)) {
-            const existingVideos = await storage.getVideosByCategory(categoryName);
-            const exists = existingVideos.some(v => v.youtubeId === videoData.youtubeId);
-            
-            if (!exists) {
-              const insertVideo: InsertVideo = {
-                ...videoData,
-                category: categoryName
-              };
-              
-              const createdVideo = await storage.createVideo(insertVideo);
-              
-              await storage.createVideoStats({
-                videoId: createdVideo.id,
-                totalViews: Math.floor(Math.random() * 10000) + 1000,
-                weeklyViews: Math.floor(Math.random() * 500) + 50,
-                monthlyViews: Math.floor(Math.random() * 2000) + 200,
-              });
-              
-              console.log(`✅ Added fallback video "${videoData.title}" to category "${category.name}"`);
-            }
-          }
-        }
+        console.log(`⚠️  Skipping category "${category.name}" - YouTube search failed`);
       }
     }
     
