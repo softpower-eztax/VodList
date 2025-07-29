@@ -110,8 +110,8 @@ const sampleYouTubeVideos = {
     {
       title: "Daily Prayer and Devotion Guide",
       description: "Practical guide for developing a strong prayer life",
-      youtubeId: "gTHy2TZk-WM",
-      thumbnailUrl: "https://img.youtube.com/vi/gTHy2TZk-WM/maxresdefault.jpg",
+      youtubeId: "B14nM3OoA7M",
+      thumbnailUrl: "https://img.youtube.com/vi/B14nM3OoA7M/maxresdefault.jpg",
       duration: "18:45",
       publishedAt: new Date("2023-11-15"),
       keywords: ["prayer", "devotion", "daily", "spiritual growth"]
@@ -119,8 +119,8 @@ const sampleYouTubeVideos = {
     {
       title: "Biblical Wisdom for Modern Life",
       description: "Applying ancient biblical principles to today's challenges",
-      youtubeId: "CDdvReNKKuk",
-      thumbnailUrl: "https://img.youtube.com/vi/CDdvReNKKuk/maxresdefault.jpg",
+      youtubeId: "7eCWNkQB-lE",
+      thumbnailUrl: "https://img.youtube.com/vi/7eCWNkQB-lE/maxresdefault.jpg",
       duration: "25:10",
       publishedAt: new Date("2023-10-30"),
       keywords: ["wisdom", "biblical", "modern", "application"]
@@ -128,8 +128,8 @@ const sampleYouTubeVideos = {
     {
       title: "The Power of Community in Faith",
       description: "Understanding the importance of Christian community",
-      youtubeId: "DXDGE_lRI0E",
-      thumbnailUrl: "https://img.youtube.com/vi/DXDGE_lRI0E/maxresdefault.jpg",
+      youtubeId: "u-1f_MJuy1A",
+      thumbnailUrl: "https://img.youtube.com/vi/u-1f_MJuy1A/maxresdefault.jpg",
       duration: "16:22",
       publishedAt: new Date("2023-09-18"),
       keywords: ["community", "fellowship", "church", "unity"]
@@ -137,8 +137,8 @@ const sampleYouTubeVideos = {
     {
       title: "Finding Peace in Difficult Times",
       description: "Encouragement and guidance for challenging seasons",
-      youtubeId: "dy9nwe9_xzw",
-      thumbnailUrl: "https://img.youtube.com/vi/dy9nwe9_xzw/maxresdefault.jpg",
+      youtubeId: "m8C0V3K6qP0",
+      thumbnailUrl: "https://img.youtube.com/vi/m8C0V3K6qP0/maxresdefault.jpg",
       duration: "20:15",
       publishedAt: new Date("2023-08-28"),
       keywords: ["peace", "difficult times", "encouragement", "comfort"]
