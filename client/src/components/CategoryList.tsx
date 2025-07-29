@@ -69,7 +69,7 @@ export default function CategoryList({
                     {category.keywords.map((keyword, index) => (
                       <span
                         key={index}
-                        className="bg-primary bg-opacity-15 text-primary px-3 py-1 rounded-full text-xs font-medium border border-primary border-opacity-20"
+                        className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-semibold border border-gray-300"
                         data-testid={`category-keyword-${category.id}-${index}`}
                       >
                         {keyword}

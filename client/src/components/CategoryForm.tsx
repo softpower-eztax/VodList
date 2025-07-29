@@ -144,10 +144,10 @@ export default function CategoryForm({ category, language, onSubmit, onCancel, i
                   {keywords.map((keyword, index) => (
                     <div
                       key={index}
-                      className="bg-primary bg-opacity-15 text-primary px-3 py-2 rounded-full text-sm flex items-center space-x-2 border border-primary border-opacity-20 shadow-sm"
+                      className="bg-gray-100 text-gray-800 px-3 py-2 rounded-full text-sm flex items-center space-x-2 border border-gray-300 shadow-sm"
                       data-testid={`keyword-tag-${index}`}
                     >
-                      <span className="font-medium">{keyword}</span>
+                      <span className="font-semibold">{keyword}</span>
                       <button
                         type="button"
                         onClick={() => removeKeyword(index)}
