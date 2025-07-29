@@ -83,8 +83,16 @@ export default function VideoCard({ video, rank, language, onPlay }: VideoCardPr
           className="text-sm text-gray-600 mt-1"
           data-testid={`video-metadata-${video.id}`}
         >
-          {formatViews(views, language)} • {formatTimeAgo(publishedDate, language)}
+          {formatTimeAgo(publishedDate, language)}
         </p>
+        <div 
+          className="mt-2 pt-2 border-t border-gray-100"
+          data-testid={`video-views-${video.id}`}
+        >
+          <p className="text-lg font-semibold text-primary">
+            {formatViews(views, language)}
+          </p>
+        </div>
       </div>
     </div>
   );
