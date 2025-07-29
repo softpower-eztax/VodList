@@ -38,18 +38,30 @@ export default function CategoryForm({ category, language, onSubmit, onCancel, i
   const keywords = form.watch("keywords");
 
   const addKeyword = () => {
-    if (keywordInput.trim() && !keywords.includes(keywordInput.trim())) {
-      form.setValue("keywords", [...keywords, keywordInput.trim()]);
-      setKeywordInput("");
+    try {
+      if (keywordInput.trim() && !keywords.includes(keywordInput.trim())) {
+        form.setValue("keywords", [...keywords, keywordInput.trim()]);
+        setKeywordInput("");
+      }
+    } catch (error) {
+      console.error('Add keyword error:', error);
     }
   };
 
   const removeKeyword = (index: number) => {
-    form.setValue("keywords", keywords.filter((_, i) => i !== index));
+    try {
+      form.setValue("keywords", keywords.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error('Remove keyword error:', error);
+    }
   };
 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
-    onSubmit(data);
+    try {
+      onSubmit(data);
+    } catch (error) {
+      console.error('Form submit error:', error);
+    }
   };
 
   return (

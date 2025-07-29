@@ -41,19 +41,29 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               {navigationItems.map(({ key, href, active }) => (
-                <a
-                  key={key}
-                  href={href}
-                  className={`
-                    ${active 
-                      ? 'text-primary font-medium border-b-2 border-primary pb-1' 
-                      : 'text-gray-600 hover:text-primary transition-colors'
-                    }
-                  `}
-                  data-testid={`nav-${key}`}
-                >
-                  {getTranslation(key, language)}
-                </a>
+                href === '#' ? (
+                  <span
+                    key={key}
+                    className="text-gray-400 cursor-not-allowed"
+                    data-testid={`nav-${key}`}
+                  >
+                    {getTranslation(key, language)}
+                  </span>
+                ) : (
+                  <a
+                    key={key}
+                    href={href}
+                    className={`
+                      ${active 
+                        ? 'text-primary font-medium border-b-2 border-primary pb-1' 
+                        : 'text-gray-600 hover:text-primary transition-colors'
+                      }
+                    `}
+                    data-testid={`nav-${key}`}
+                  >
+                    {getTranslation(key, language)}
+                  </a>
+                )
               ))}
             </nav>
 
@@ -128,14 +138,24 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
             </div>
             <nav className="space-y-4">
               {navigationItems.map(({ key, href, active }) => (
-                <a
-                  key={key}
-                  href={href}
-                  className={`block ${active ? 'text-primary font-medium' : 'text-gray-600 hover:text-primary transition-colors'}`}
-                  data-testid={`mobile-nav-${key}`}
-                >
-                  {getTranslation(key, language)}
-                </a>
+                href === '#' ? (
+                  <span
+                    key={key}
+                    className="block text-gray-400 cursor-not-allowed"
+                    data-testid={`mobile-nav-${key}`}
+                  >
+                    {getTranslation(key, language)}
+                  </span>
+                ) : (
+                  <a
+                    key={key}
+                    href={href}
+                    className={`block ${active ? 'text-primary font-medium' : 'text-gray-600 hover:text-primary transition-colors'}`}
+                    data-testid={`mobile-nav-${key}`}
+                  >
+                    {getTranslation(key, language)}
+                  </a>
+                )
               ))}
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2">

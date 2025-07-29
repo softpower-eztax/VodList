@@ -115,9 +115,18 @@ export default function CategoriesPage() {
   };
 
   const handleDelete = (categoryId: string) => {
-    if (confirm(getTranslation('confirm_delete_category', language))) {
-      setDeletingId(categoryId);
-      deleteMutation.mutate(categoryId);
+    try {
+      if (confirm(getTranslation('confirm_delete_category', language))) {
+        setDeletingId(categoryId);
+        deleteMutation.mutate(categoryId);
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast({
+        title: getTranslation('error', language),
+        description: getTranslation('category_delete_error', language),
+        variant: "destructive",
+      });
     }
   };
 
@@ -147,7 +156,13 @@ export default function CategoriesPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.location.href = '/'}
+              onClick={() => {
+                try {
+                  window.location.href = '/';
+                } catch (error) {
+                  console.error('Navigation error:', error);
+                }
+              }}
               data-testid="back-to-dashboard"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
