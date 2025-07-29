@@ -279,6 +279,7 @@ export async function populateVideosFromYouTube(): Promise<void> {
             
             // Create initial stats using real YouTube view count
             const realViewCount = parseInt(video.statistics?.viewCount || '0');
+            console.log(`📊 Video "${video.snippet.title}" has ${realViewCount.toLocaleString()} views on YouTube`);
             await storage.createVideoStats({
               videoId: createdVideo.id,
               totalViews: realViewCount,
