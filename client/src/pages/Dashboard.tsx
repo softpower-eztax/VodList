@@ -15,8 +15,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function Dashboard() {
   const [language, setLanguage] = useState<Language>('en');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('music');
+  const [activeCategory, setActiveCategory] = useState('');
   const [sortBy, setSortBy] = useState('popular');
+
+  // Fetch categories to set default active category
+  const { data: categories } = useQuery({
+    queryKey: ['/api/categories'],
+    select: (data: any[]) => data || []
+  });
+
+  // Set first category as default when categories load
+  useEffect(() => {
+    if (categories && categories.length > 0 && !activeCategory) {
+      setActiveCategory(categories[0].name);
+    }
+  }, [categories, activeCategory]);
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -28,6 +41,7 @@ export default function Dashboard() {
   // Fetch videos based on active category
   const { data: videos, isLoading: videosLoading } = useQuery({
     queryKey: ['/api/videos/top', activeCategory],
+    enabled: !!activeCategory, // Only fetch when activeCategory is set
     select: (data: VideoWithStats[]) => {
       if (!data) return [];
       
