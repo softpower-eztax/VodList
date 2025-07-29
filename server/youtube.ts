@@ -148,15 +148,33 @@ const sampleYouTubeVideos = {
 
 export async function populateVideosFromYouTube(): Promise<void> {
   try {
-    // Get all categories
+    // Get all categories with their keywords
     const categories = await storage.getCategories();
     
     for (const category of categories) {
+      if (!category.keywords || category.keywords.length === 0) {
+        console.log(`⚠️  Skipping category "${category.name}" - no keywords defined`);
+        continue;
+      }
+
       const categoryName = category.name.toLowerCase();
       const videosForCategory = sampleYouTubeVideos[categoryName as keyof typeof sampleYouTubeVideos];
       
       if (videosForCategory) {
         for (const videoData of videosForCategory) {
+          // Check if video keywords match any category keywords
+          const hasMatchingKeyword = videoData.keywords.some(videoKeyword =>
+            category.keywords!.some(categoryKeyword =>
+              videoKeyword.toLowerCase().includes(categoryKeyword.toLowerCase()) ||
+              categoryKeyword.toLowerCase().includes(videoKeyword.toLowerCase())
+            )
+          );
+
+          if (!hasMatchingKeyword) {
+            console.log(`⏭️  Skipping video "${videoData.title}" - no matching keywords with category "${category.name}"`);
+            continue;
+          }
+
           // Check if video already exists
           const existingVideos = await storage.getVideosByCategory(categoryName);
           const exists = existingVideos.some(v => v.youtubeId === videoData.youtubeId);
@@ -172,16 +190,22 @@ export async function populateVideosFromYouTube(): Promise<void> {
             // Create initial stats for the video
             await storage.createVideoStats({
               videoId: createdVideo.id,
-              totalViews: Math.floor(Math.random() * 10000) + 1000, // Random views between 1000-11000
+              totalViews: Math.floor(Math.random() * 10000) + 1000,
               weeklyViews: Math.floor(Math.random() * 500) + 50,
               monthlyViews: Math.floor(Math.random() * 2000) + 200,
             });
+            
+            console.log(`✅ Added video "${videoData.title}" to category "${category.name}" (matched keywords: ${videoData.keywords.join(', ')})`);
+          } else {
+            console.log(`⏭️  Video "${videoData.title}" already exists in category "${category.name}"`);
           }
         }
+      } else {
+        console.log(`⚠️  No sample videos available for category "${category.name}"`);
       }
     }
     
-    console.log('✅ Videos populated from YouTube data');
+    console.log('✅ Videos populated from YouTube data based on category keywords');
   } catch (error) {
     console.error('❌ Error populating videos:', error);
   }
