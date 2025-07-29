@@ -38,7 +38,7 @@ export default function CategoryList({
   return (
     <div className="space-y-4">
       {categories.map((category) => (
-        <Card key={category.id} className="hover:shadow-md transition-shadow">
+        <Card key={category.id} className="hover:shadow-md transition-shadow border-l-4 border-l-primary border-l-opacity-30">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -64,11 +64,12 @@ export default function CategoryList({
                 )}
                 
                 {category.keywords && category.keywords.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <span className="text-xs font-medium text-gray-500 mr-2">Keywords:</span>
                     {category.keywords.map((keyword, index) => (
                       <span
                         key={index}
-                        className="bg-secondary bg-opacity-10 text-secondary px-2 py-1 rounded text-xs"
+                        className="bg-primary bg-opacity-15 text-primary px-3 py-1 rounded-full text-xs font-medium border border-primary border-opacity-20"
                         data-testid={`category-keyword-${category.id}-${index}`}
                       >
                         {keyword}
