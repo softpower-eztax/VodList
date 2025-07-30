@@ -10,18 +10,24 @@ import StatsCards from "@/components/StatsCards";
 import VideoCard from "@/components/VideoCard";
 import VideoPopulator from "@/components/VideoPopulator";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Dashboard() {
-  const [language, setLanguage] = useState<Language>('en');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('');
-  const [sortBy, setSortBy] = useState('popular');
+  const [language, setLanguage] = useState<Language>("en");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("");
+  const [sortBy, setSortBy] = useState("popular");
 
   // Fetch categories to set default active category
   const { data: categories } = useQuery({
-    queryKey: ['/api/categories'],
-    select: (data: any[]) => data || []
+    queryKey: ["/api/categories"],
+    select: (data: any[]) => data || [],
   });
 
   // Set first category as default when categories load
@@ -33,55 +39,71 @@ export default function Dashboard() {
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['/api/stats/dashboard'],
-    select: (data: { totalVideos: number; totalViews: number; categoriesCount: number } | undefined) => 
-      data || { totalVideos: 0, totalViews: 0, categoriesCount: 3 }
+    queryKey: ["/api/stats/dashboard"],
+    select: (
+      data:
+        | { totalVideos: number; totalViews: number; categoriesCount: number }
+        | undefined,
+    ) => data || { totalVideos: 0, totalViews: 0, categoriesCount: 3 },
   });
 
   // Fetch videos based on active category
   const { data: videos, isLoading: videosLoading } = useQuery({
-    queryKey: ['/api/videos/top', activeCategory],
+    queryKey: ["/api/videos/top", activeCategory],
     enabled: !!activeCategory, // Only fetch when activeCategory is set
     select: (data: VideoWithStats[]) => {
       if (!data) return [];
-      
+
       // Apply search filter
       let filteredVideos = data;
       if (searchQuery) {
-        filteredVideos = data.filter(video => 
-          video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          video.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          video.keywords?.some(keyword => keyword.toLowerCase().includes(searchQuery.toLowerCase()))
+        filteredVideos = data.filter(
+          (video) =>
+            video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            video.description
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            video.keywords?.some((keyword) =>
+              keyword.toLowerCase().includes(searchQuery.toLowerCase()),
+            ),
         );
       }
 
+      console.log("Filtered videos:", filteredVideos);
+
       // Apply sorting
       switch (sortBy) {
-        case 'recent':
-          return filteredVideos.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
-        case 'viewed':
-          return filteredVideos.sort((a, b) => (b.stats?.totalViews || 0) - (a.stats?.totalViews || 0));
-        case 'popular':
+        case "recent":
+          return filteredVideos.sort(
+            (a, b) =>
+              new Date(b.publishedAt).getTime() -
+              new Date(a.publishedAt).getTime(),
+          );
+        case "viewed":
+          return filteredVideos.sort(
+            (a, b) => (b.stats?.totalViews || 0) - (a.stats?.totalViews || 0),
+          );
+        case "popular":
         default:
           return filteredVideos;
       }
-    }
+    },
   });
 
   const handleVideoPlay = (youtubeId: string) => {
     // Open YouTube video in new tab
-    window.open(`https://www.youtube.com/watch?v=${youtubeId}`, '_blank');
+    window.open(`https://www.youtube.com/watch?v=${youtubeId}`, "_blank");
   };
 
   const handleLoadMore = () => {
     // TODO: Implement pagination
-    console.log('Load more videos');
+    console.log("Load more videos");
   };
 
   const sortOptions = [
-    { value: 'popular', labelKey: 'most_popular' },
-    { value: 'recent', labelKey: 'most_recent' },
-    { value: 'viewed', labelKey: 'most_viewed' },
+    { value: "popular", labelKey: "most_popular" },
+    { value: "recent", labelKey: "most_recent" },
+    { value: "viewed", labelKey: "most_viewed" },
   ];
 
   return (
@@ -97,10 +119,10 @@ export default function Dashboard() {
         {/* Dashboard Title */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-dark mb-2">
-            {getTranslation('dashboard_title', language)}
+            {getTranslation("dashboard_title", language)}
           </h1>
           <p className="text-gray-600">
-            {getTranslation('dashboard_subtitle', language)}
+            {getTranslation("dashboard_subtitle", language)}
           </p>
         </div>
 
@@ -121,7 +143,10 @@ export default function Dashboard() {
         {statsLoading && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse"
+              >
                 <div className="bg-gray-200 h-6 rounded mb-2"></div>
                 <div className="bg-gray-200 h-8 rounded mb-4"></div>
                 <div className="bg-gray-200 h-4 rounded w-2/3"></div>
@@ -134,11 +159,12 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-dark">
-              {getTranslation('top_videos_title', language)} - {getTranslation(activeCategory, language)}
+              {getTranslation("top_videos_title", language)} -{" "}
+              {getTranslation(activeCategory, language)}
             </h2>
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600">
-                {getTranslation('sort_by', language)}
+                {getTranslation("sort_by", language)}
               </span>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-40" data-testid="sort-selector">
@@ -181,10 +207,9 @@ export default function Dashboard() {
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">
-                {searchQuery 
-                  ? `No videos found for "${searchQuery}"` 
-                  : 'No videos available in this category'
-                }
+                {searchQuery
+                  ? `No videos found for "${searchQuery}"`
+                  : "No videos available in this category"}
               </p>
             </div>
           )}
@@ -198,7 +223,7 @@ export default function Dashboard() {
                 data-testid="load-more-button"
               >
                 <ChevronDown className="w-4 h-4 mr-2" />
-                {getTranslation('load_more', language)}
+                {getTranslation("load_more", language)}
               </Button>
             </div>
           )}

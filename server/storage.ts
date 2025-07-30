@@ -1,4 +1,18 @@
-import { users, videos, categories, videoStats, type Video, type Category, type VideoStats, type InsertVideo, type InsertCategory, type InsertVideoStats, type VideoWithStats, type User, type InsertUser } from "@shared/schema";
+import {
+  users,
+  videos,
+  categories,
+  videoStats,
+  type Video,
+  type Category,
+  type VideoStats,
+  type InsertVideo,
+  type InsertCategory,
+  type InsertVideoStats,
+  type VideoWithStats,
+  type User,
+  type InsertUser,
+} from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, and, inArray } from "drizzle-orm";
 import { randomUUID } from "crypto";
@@ -13,21 +27,33 @@ export interface IStorage {
   getVideos(): Promise<VideoWithStats[]>;
   getVideoById(id: string): Promise<VideoWithStats | undefined>;
   getVideosByCategory(category: string): Promise<VideoWithStats[]>;
-  getTopVideosByCategory(category: string, limit: number): Promise<VideoWithStats[]>;
+  getTopVideosByCategory(
+    category: string,
+    limit: number,
+  ): Promise<VideoWithStats[]>;
   createVideo(video: InsertVideo): Promise<Video>;
-  updateVideo(id: string, video: Partial<InsertVideo>): Promise<Video | undefined>;
+  updateVideo(
+    id: string,
+    video: Partial<InsertVideo>,
+  ): Promise<Video | undefined>;
   deleteVideo(id: string): Promise<boolean>;
 
   // Category methods
   getCategories(): Promise<Category[]>;
   getCategoryByName(name: string): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
-  updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined>;
+  updateCategory(
+    id: string,
+    category: Partial<InsertCategory>,
+  ): Promise<Category | undefined>;
   deleteCategory(id: string): Promise<boolean>;
 
   // Stats methods
   getVideoStats(videoId: string): Promise<VideoStats | undefined>;
-  updateVideoStats(videoId: string, stats: Partial<InsertVideoStats>): Promise<VideoStats | undefined>;
+  updateVideoStats(
+    videoId: string,
+    stats: Partial<InsertVideoStats>,
+  ): Promise<VideoStats | undefined>;
   createVideoStats(stats: InsertVideoStats): Promise<VideoStats>;
   getTopVideos(limit: number): Promise<VideoWithStats[]>;
   getDashboardStats(): Promise<{
@@ -45,15 +71,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(insertUser)
-      .returning();
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
 
@@ -66,9 +92,9 @@ export class DatabaseStorage implements IStorage {
       .where(eq(videos.isActive, true))
       .orderBy(desc(videos.createdAt));
 
-    return result.map(row => ({
+    return result.map((row) => ({
       ...row.videos,
-      stats: row.video_stats || undefined
+      stats: row.video_stats || undefined,
     }));
   }
 
@@ -84,7 +110,7 @@ export class DatabaseStorage implements IStorage {
     const row = result[0];
     return {
       ...row.videos,
-      stats: row.video_stats || undefined
+      stats: row.video_stats || undefined,
     };
   }
 
@@ -96,13 +122,24 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(videos.category, category), eq(videos.isActive, true)))
       .orderBy(desc(videos.createdAt));
 
-    return result.map(row => ({
+    return result.map((row) => ({
       ...row.videos,
-      stats: row.video_stats || undefined
+      stats: row.video_stats || undefined,
     }));
   }
 
-  async getTopVideosByCategory(category: string, limit: number): Promise<VideoWithStats[]> {
+  async getTopVideosByCategory(
+    category: string,
+    limit: number,
+  ): Promise<VideoWithStats[]> {
+    console.log(
+      "Fetching top videos for category:",
+      category,
+      "limit:",
+      limit,
+      category,
+    );
+
     const result = await db
       .select()
       .from(videos)
@@ -111,21 +148,21 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(sql`COALESCE(${videoStats.totalViews}, 0)`))
       .limit(limit);
 
-    return result.map(row => ({
+    return result.map((row) => ({
       ...row.videos,
-      stats: row.video_stats || undefined
+      stats: row.video_stats || undefined,
     }));
   }
 
   async createVideo(video: InsertVideo): Promise<Video> {
-    const [newVideo] = await db
-      .insert(videos)
-      .values(video)
-      .returning();
+    const [newVideo] = await db.insert(videos).values(video).returning();
     return newVideo;
   }
 
-  async updateVideo(id: string, video: Partial<InsertVideo>): Promise<Video | undefined> {
+  async updateVideo(
+    id: string,
+    video: Partial<InsertVideo>,
+  ): Promise<Video | undefined> {
     const [updatedVideo] = await db
       .update(videos)
       .set(video)
@@ -148,7 +185,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCategoryByName(name: string): Promise<Category | undefined> {
-    const [category] = await db.select().from(categories).where(eq(categories.name, name));
+    const [category] = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.name, name));
     return category || undefined;
   }
 
@@ -160,7 +200,10 @@ export class DatabaseStorage implements IStorage {
     return newCategory;
   }
 
-  async updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | undefined> {
+  async updateCategory(
+    id: string,
+    category: Partial<InsertCategory>,
+  ): Promise<Category | undefined> {
     const [updatedCategory] = await db
       .update(categories)
       .set(category)
@@ -170,19 +213,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteCategory(id: string): Promise<boolean> {
-    const result = await db
-      .delete(categories)
-      .where(eq(categories.id, id));
+    const result = await db.delete(categories).where(eq(categories.id, id));
     return result.rowCount !== null && result.rowCount > 0;
   }
 
   // Stats methods
   async getVideoStats(videoId: string): Promise<VideoStats | undefined> {
-    const [stats] = await db.select().from(videoStats).where(eq(videoStats.videoId, videoId));
+    const [stats] = await db
+      .select()
+      .from(videoStats)
+      .where(eq(videoStats.videoId, videoId));
     return stats || undefined;
   }
 
-  async updateVideoStats(videoId: string, stats: Partial<InsertVideoStats>): Promise<VideoStats | undefined> {
+  async updateVideoStats(
+    videoId: string,
+    stats: Partial<InsertVideoStats>,
+  ): Promise<VideoStats | undefined> {
     const [updatedStats] = await db
       .update(videoStats)
       .set({ ...stats, lastUpdated: new Date() })
@@ -192,10 +239,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createVideoStats(stats: InsertVideoStats): Promise<VideoStats> {
-    const [newStats] = await db
-      .insert(videoStats)
-      .values(stats)
-      .returning();
+    const [newStats] = await db.insert(videoStats).values(stats).returning();
     return newStats;
   }
 
@@ -208,9 +252,9 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(sql`COALESCE(${videoStats.totalViews}, 0)`))
       .limit(limit);
 
-    return result.map(row => ({
+    return result.map((row) => ({
       ...row.videos,
-      stats: row.video_stats || undefined
+      stats: row.video_stats || undefined,
     }));
   }
 
@@ -225,7 +269,9 @@ export class DatabaseStorage implements IStorage {
       .where(eq(videos.isActive, true));
 
     const [viewsTotal] = await db
-      .select({ total: sql<number>`COALESCE(sum(${videoStats.totalViews}), 0)` })
+      .select({
+        total: sql<number>`COALESCE(sum(${videoStats.totalViews}), 0)`,
+      })
       .from(videoStats);
 
     const [categoryCount] = await db
