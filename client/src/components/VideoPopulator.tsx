@@ -12,47 +12,50 @@ interface VideoPopulatorProps {
   onPopulate?: () => void;
 }
 
-export default function VideoPopulator({ language, onPopulate }: VideoPopulatorProps) {
+export default function VideoPopulator({
+  language,
+  onPopulate,
+}: VideoPopulatorProps) {
   const { toast } = useToast();
 
   // Populate videos mutation
   const populateMutation = useMutation({
-    mutationFn: () => apiRequest('POST', '/api/videos/populate'),
+    mutationFn: () => apiRequest("POST", "/api/videos/populate"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/videos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       toast({
-        title: getTranslation('success', language),
+        title: getTranslation("success", language),
         description: "Videos have been populated from YouTube successfully!",
       });
     },
     onError: () => {
       toast({
-        title: getTranslation('error', language),
+        title: getTranslation("error", language),
         description: "Failed to populate videos from YouTube",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Refresh stats mutation
   const refreshMutation = useMutation({
-    mutationFn: () => apiRequest('POST', '/api/videos/refresh-stats'),
+    mutationFn: () => apiRequest("POST", "/api/videos/refresh-stats"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/videos'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/videos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       toast({
-        title: getTranslation('success', language),
+        title: getTranslation("success", language),
         description: "Video statistics have been refreshed!",
       });
     },
     onError: () => {
       toast({
-        title: getTranslation('error', language),
+        title: getTranslation("error", language),
         description: "Failed to refresh video statistics",
         variant: "destructive",
       });
-    }
+    },
   });
 
   return (
@@ -75,10 +78,12 @@ export default function VideoPopulator({ language, onPopulate }: VideoPopulatorP
             data-testid="populate-videos-button"
           >
             <Download className="w-4 h-4 mr-2" />
-            {populateMutation.isPending ? "Loading..." : "Load Videos for Category"}
+            {populateMutation.isPending
+              ? "Loading..."
+              : "Load Videos for Category"}
           </Button>
-          
-          <Button
+
+          {/* <Button
             onClick={() => refreshMutation.mutate()}
             disabled={refreshMutation.isPending}
             variant="outline"
@@ -87,12 +92,13 @@ export default function VideoPopulator({ language, onPopulate }: VideoPopulatorP
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             {refreshMutation.isPending ? "Refreshing..." : "Refresh Video Stats"}
-          </Button>
+          </Button> */}
         </div>
-        
+
         <p className="text-sm text-gray-600 mt-3">
-          Click "Load Videos for Category" to search YouTube in real-time using the selected category keywords. 
-          Search uses AND logic - videos must contain ALL keywords from the category.
+          Click "Load Videos for Category" to search YouTube in real-time using
+          the selected category keywords. Search uses AND logic - videos must
+          contain ALL keywords from the category.
         </p>
       </CardContent>
     </Card>
