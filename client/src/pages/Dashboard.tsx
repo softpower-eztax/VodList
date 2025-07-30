@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { type VideoWithStats } from "@shared/schema";
@@ -23,6 +23,8 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
   const [sortBy, setSortBy] = useState("popular");
+  const [loadedVideos, setLoadedVideos] = useState<VideoWithStats[]>([]);
+  const [lastLoadedCategory, setLastLoadedCategory] = useState<string>("");
 
   // Fetch categories to set default active category
   const { data: categories } = useQuery({
@@ -48,48 +50,12 @@ export default function Dashboard() {
   });
 
   // Fetch videos based on active category using real-time search
-  const { data: videos, isLoading: videosLoading, refetch: refetchVideos } = useQuery({
+  const { data: fetchedVideos, isLoading: videosLoading, refetch: refetchVideos } = useQuery({
     queryKey: ["/api/videos/search", activeCategory],
     enabled: false, // Disabled by default - will be triggered by populate button
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache results
-    select: (data: VideoWithStats[]) => {
-      if (!data) return [];
-
-      // Apply search filter
-      let filteredVideos = data;
-      if (searchQuery) {
-        filteredVideos = data.filter(
-          (video) =>
-            video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            video.description
-              ?.toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            video.keywords?.some((keyword) =>
-              keyword.toLowerCase().includes(searchQuery.toLowerCase()),
-            ),
-        );
-      }
-
-      console.log("Filtered videos:", filteredVideos);
-
-      // Apply sorting
-      switch (sortBy) {
-        case "recent":
-          return filteredVideos.sort(
-            (a, b) =>
-              new Date(b.publishedAt).getTime() -
-              new Date(a.publishedAt).getTime(),
-          );
-        case "viewed":
-          return filteredVideos.sort(
-            (a, b) => (b.stats?.totalViews || 0) - (a.stats?.totalViews || 0),
-          );
-        case "popular":
-        default:
-          return filteredVideos;
-      }
-    },
+    select: (data: VideoWithStats[]) => data || [],
   });
 
   const handleVideoPlay = (youtubeId: string) => {
@@ -101,6 +67,43 @@ export default function Dashboard() {
     // TODO: Implement pagination
     console.log("Load more videos");
   };
+
+  // Process videos for display (use loaded videos if they match current category, otherwise empty)
+  const displayVideos = React.useMemo(() => {
+    const videosToProcess = lastLoadedCategory === activeCategory ? loadedVideos : [];
+    
+    if (!videosToProcess || videosToProcess.length === 0) return [];
+
+    // Apply search filter
+    let filteredVideos = videosToProcess;
+    if (searchQuery) {
+      filteredVideos = videosToProcess.filter(
+        (video) =>
+          video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          video.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          video.keywords?.some((keyword) =>
+            keyword.toLowerCase().includes(searchQuery.toLowerCase()),
+          ),
+      );
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case "recent":
+        return filteredVideos.sort(
+          (a, b) =>
+            new Date(b.publishedAt).getTime() -
+            new Date(a.publishedAt).getTime(),
+        );
+      case "viewed":
+        return filteredVideos.sort(
+          (a, b) => (b.stats?.totalViews || 0) - (a.stats?.totalViews || 0),
+        );
+      case "popular":
+      default:
+        return filteredVideos;
+    }
+  }, [loadedVideos, lastLoadedCategory, activeCategory, searchQuery, sortBy]);
 
   const sortOptions = [
     { value: "popular", labelKey: "most_popular" },
@@ -136,7 +139,16 @@ export default function Dashboard() {
         />
 
         {/* Video Populator */}
-        <VideoPopulator language={language} onPopulate={() => refetchVideos()} />
+        <VideoPopulator 
+          language={language} 
+          onPopulate={async () => {
+            const result = await refetchVideos();
+            if (result.data) {
+              setLoadedVideos(result.data);
+              setLastLoadedCategory(activeCategory);
+            }
+          }} 
+        />
 
         {/* Stats Cards */}
         {stats && !statsLoading && (
@@ -194,9 +206,9 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-          ) : videos && videos.length > 0 ? (
+          ) : displayVideos && displayVideos.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {videos.slice(0, 10).map((video, index) => (
+              {displayVideos.slice(0, 10).map((video, index) => (
                 <VideoCard
                   key={video.id}
                   video={video}
@@ -211,13 +223,15 @@ export default function Dashboard() {
               <p className="text-gray-500 text-lg">
                 {searchQuery
                   ? `No videos found for "${searchQuery}"`
-                  : `Click "Populate Videos" to load fresh content for ${getTranslation(activeCategory, language)}`}
+                  : lastLoadedCategory === activeCategory
+                  ? "No videos found for this category"
+                  : `Click "Load Videos for Category" to load fresh content for ${getTranslation(activeCategory, language)}`}
               </p>
             </div>
           )}
 
           {/* Load More Button */}
-          {videos && videos.length >= 10 && (
+          {displayVideos && displayVideos.length >= 10 && (
             <div className="mt-8 text-center">
               <Button
                 onClick={handleLoadMore}
