@@ -11,7 +11,7 @@ import CategoryForm from "@/components/CategoryForm";
 import CategoryList from "@/components/CategoryList";
 import { Button } from "@/components/ui/button";
 
-export default function CategoriesPage() {
+export default function FavorPage() {
   const [language, setLanguage] = useState<Language>("en");
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);

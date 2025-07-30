@@ -10,19 +10,24 @@ interface HeaderProps {
 }
 
 const languageOptions = [
-  { code: 'en' as Language, flag: '🇺🇸', label: 'EN' },
-  { code: 'es' as Language, flag: '🇪🇸', label: 'ES' },
-  { code: 'ko' as Language, flag: '🇰🇷', label: 'KO' },
+  { code: "en" as Language, flag: "🇺🇸", label: "EN" },
+  { code: "es" as Language, flag: "🇪🇸", label: "ES" },
+  { code: "ko" as Language, flag: "🇰🇷", label: "KO" },
 ];
 
 const navigationItems = [
-  { key: 'dashboard', href: '/', active: true },
-  { key: 'browse', href: '#', active: false },
-  { key: 'categories', href: '/categories', active: false },
-  { key: 'favorites', href: '#', active: false },
+  { key: "dashboard", href: "/", active: true },
+  { key: "browse", href: "/favor", active: false },
+  { key: "categories", href: "/categories", active: false },
+  { key: "favorites", href: "#", active: false },
 ];
 
-export default function Header({ language, onLanguageChange, searchQuery, onSearchChange }: HeaderProps) {
+export default function Header({
+  language,
+  onLanguageChange,
+  searchQuery,
+  onSearchChange,
+}: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -40,8 +45,8 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              {navigationItems.map(({ key, href, active }) => (
-                href === '#' ? (
+              {navigationItems.map(({ key, href, active }) =>
+                href === "#" ? (
                   <span
                     key={key}
                     className="text-gray-400 cursor-not-allowed"
@@ -54,17 +59,18 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
                     key={key}
                     href={href}
                     className={`
-                      ${active 
-                        ? 'text-primary font-medium border-b-2 border-primary pb-1' 
-                        : 'text-gray-600 hover:text-primary transition-colors'
+                      ${
+                        active
+                          ? "text-primary font-medium border-b-2 border-primary pb-1"
+                          : "text-gray-600 hover:text-primary transition-colors"
                       }
                     `}
                     data-testid={`nav-${key}`}
                   >
                     {getTranslation(key, language)}
                   </a>
-                )
-              ))}
+                ),
+              )}
             </nav>
 
             {/* Search & Language */}
@@ -74,7 +80,7 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
                 <Search className="text-gray-400 mr-3 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder={getTranslation('search_placeholder', language)}
+                  placeholder={getTranslation("search_placeholder", language)}
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
                   className="bg-transparent outline-none flex-1 text-sm"
@@ -117,12 +123,12 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
 
       {/* Mobile Navigation Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-50"
           onClick={() => setIsMobileMenuOpen(false)}
           data-testid="mobile-menu-overlay"
         >
-          <div 
+          <div
             className="bg-white w-64 h-full shadow-lg p-4"
             onClick={(e) => e.stopPropagation()}
           >
@@ -137,8 +143,8 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
               </button>
             </div>
             <nav className="space-y-4">
-              {navigationItems.map(({ key, href, active }) => (
-                href === '#' ? (
+              {navigationItems.map(({ key, href, active }) =>
+                href === "#" ? (
                   <span
                     key={key}
                     className="block text-gray-400 cursor-not-allowed"
@@ -150,19 +156,19 @@ export default function Header({ language, onLanguageChange, searchQuery, onSear
                   <a
                     key={key}
                     href={href}
-                    className={`block ${active ? 'text-primary font-medium' : 'text-gray-600 hover:text-primary transition-colors'}`}
+                    className={`block ${active ? "text-primary font-medium" : "text-gray-600 hover:text-primary transition-colors"}`}
                     data-testid={`mobile-nav-${key}`}
                   >
                     {getTranslation(key, language)}
                   </a>
-                )
-              ))}
+                ),
+              )}
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2">
                   <Search className="text-gray-400 mr-2 w-4 h-4" />
                   <input
                     type="text"
-                    placeholder={getTranslation('search_placeholder', language)}
+                    placeholder={getTranslation("search_placeholder", language)}
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
                     className="bg-transparent outline-none flex-1 text-sm"
