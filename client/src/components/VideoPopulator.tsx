@@ -9,9 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface VideoPopulatorProps {
   language: Language;
+  onPopulate?: () => void;
 }
 
-export default function VideoPopulator({ language }: VideoPopulatorProps) {
+export default function VideoPopulator({ language, onPopulate }: VideoPopulatorProps) {
   const { toast } = useToast();
 
   // Populate videos mutation
@@ -62,13 +63,19 @@ export default function VideoPopulator({ language }: VideoPopulatorProps) {
       <CardContent>
         <div className="flex flex-col sm:flex-row gap-4">
           <Button
-            onClick={() => populateMutation.mutate()}
+            onClick={() => {
+              if (onPopulate) {
+                onPopulate(); // Trigger real-time search
+              } else {
+                populateMutation.mutate(); // Fallback to database population
+              }
+            }}
             disabled={populateMutation.isPending}
             className="flex-1"
             data-testid="populate-videos-button"
           >
             <Download className="w-4 h-4 mr-2" />
-            {populateMutation.isPending ? "Loading..." : "Populate Videos from YouTube"}
+            {populateMutation.isPending ? "Loading..." : "Load Videos for Category"}
           </Button>
           
           <Button
@@ -84,8 +91,8 @@ export default function VideoPopulator({ language }: VideoPopulatorProps) {
         </div>
         
         <p className="text-sm text-gray-600 mt-3">
-          Click "Populate Videos" to search YouTube using only your exact category keywords. 
-          Search uses AND logic - videos must contain ALL keywords from each category.
+          Click "Load Videos for Category" to search YouTube in real-time using the selected category keywords. 
+          Search uses AND logic - videos must contain ALL keywords from the category.
         </p>
       </CardContent>
     </Card>
