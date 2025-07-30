@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
   const [sortBy, setSortBy] = useState("popular");
+  const [loadVideos, setLoadVideos] = useState(false);
 
   // Fetch categories to set default active category
   const { data: categories } = useQuery({
@@ -34,8 +35,14 @@ export default function Dashboard() {
   useEffect(() => {
     if (categories && categories.length > 0 && !activeCategory) {
       setActiveCategory(categories[0].name);
+      setLoadVideos(false); // Reset load videos state when category changes
     }
   }, [categories, activeCategory]);
+
+  // Reset load videos when category changes
+  useEffect(() => {
+    setLoadVideos(false);
+  }, [activeCategory]);
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -50,7 +57,7 @@ export default function Dashboard() {
   // Fetch videos based on active category using real-time search
   const { data: videos, isLoading: videosLoading } = useQuery({
     queryKey: ["/api/videos/search", activeCategory],
-    enabled: !!activeCategory, // Only fetch when activeCategory is set
+    enabled: !!activeCategory && loadVideos, // Only fetch when category is set AND user clicked load button
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache results
     select: (data: VideoWithStats[]) => {
@@ -183,6 +190,19 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Load Videos Button */}
+          {!loadVideos && activeCategory && (
+            <div className="text-center mb-6">
+              <button
+                onClick={() => setLoadVideos(true)}
+                data-testid="button-load-videos"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+              >
+                {getTranslation("load_videos", language) || `Load Videos for ${getTranslation(activeCategory, language)}`}
+              </button>
+            </div>
+          )}
+
           {/* Videos Grid */}
           {videosLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -206,7 +226,7 @@ export default function Dashboard() {
                 />
               ))}
             </div>
-          ) : (
+          ) : loadVideos ? (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">
                 {searchQuery
@@ -214,7 +234,7 @@ export default function Dashboard() {
                   : "No videos available in this category"}
               </p>
             </div>
-          )}
+          ) : null}
 
           {/* Load More Button */}
           {videos && videos.length >= 10 && (

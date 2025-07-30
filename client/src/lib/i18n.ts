@@ -32,6 +32,7 @@ export const translations: Translations = {
     most_popular: "Most Popular",
     most_recent: "Most Recent",
     most_viewed: "Most Viewed",
+    load_videos: "Load Videos",
     load_more: "Load More Videos",
 
     // Footer
@@ -110,6 +111,7 @@ export const translations: Translations = {
     most_popular: "Más Populares",
     most_recent: "Más Recientes",
     most_viewed: "Más Vistos",
+    load_videos: "Cargar Videos",
     load_more: "Cargar Más Videos",
 
     // Footer
@@ -188,6 +190,7 @@ export const translations: Translations = {
     most_popular: "가장 인기",
     most_recent: "최신",
     most_viewed: "가장 많이 본",
+    load_videos: "비디오 로드",
     load_more: "더 많은 비디오 로드",
 
     // Footer
