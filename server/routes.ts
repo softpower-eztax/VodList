@@ -39,6 +39,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Real-time search videos by category keywords
+  app.get("/api/videos/search/:category", async (req, res) => {
+    try {
+      const { category } = req.params;
+      const limit = parseInt(req.query.limit as string) || 10;
+      
+      // Get category and its keywords
+      const categoryData = await storage.getCategoryByName(category);
+      if (!categoryData || !categoryData.keywords || categoryData.keywords.length === 0) {
+        return res.json([]); // Return empty array if no keywords
+      }
+      
+      // Search YouTube in real-time using category keywords
+      const { searchYouTubeByKeywords } = await import("./youtube");
+      const videos = await searchYouTubeByKeywords(categoryData.keywords, limit);
+      
+      res.json(videos);
+    } catch (error) {
+      console.error("Real-time search error:", error);
+      res.status(500).json({ message: "Failed to search videos in real-time" });
+    }
+  });
+
   // Get overall top videos
   app.get("/api/videos/top", async (req, res) => {
     try {

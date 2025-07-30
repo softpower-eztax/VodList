@@ -47,10 +47,12 @@ export default function Dashboard() {
     ) => data || { totalVideos: 0, totalViews: 0, categoriesCount: 3 },
   });
 
-  // Fetch videos based on active category
+  // Fetch videos based on active category using real-time search
   const { data: videos, isLoading: videosLoading } = useQuery({
-    queryKey: ["/api/videos/top", activeCategory],
+    queryKey: ["/api/videos/search", activeCategory],
     enabled: !!activeCategory, // Only fetch when activeCategory is set
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache results
     select: (data: VideoWithStats[]) => {
       if (!data) return [];
 

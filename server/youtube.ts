@@ -308,6 +308,51 @@ export async function populateVideosFromYouTube(): Promise<void> {
   }
 }
 
+// Real-time YouTube search by keywords (no database storage)
+export async function searchYouTubeByKeywords(keywords: string[], maxResults: number = 10): Promise<any[]> {
+  try {
+    if (!keywords || keywords.length === 0) {
+      return [];
+    }
+
+    // Build search query with AND logic using + prefix
+    const searchQuery = keywords.map(keyword => `+${keyword.trim()}`).join(' ');
+    console.log(`🔍 Real-time YouTube search: "${searchQuery}"`);
+    
+    const youtubeVideos = await searchYouTubeVideos(searchQuery, maxResults);
+    
+    // Transform YouTube data to match frontend expectations
+    const transformedVideos = youtubeVideos.map(video => ({
+      id: `temp_${video.id.videoId}`, // Temporary ID for real-time results
+      title: video.snippet.title,
+      description: video.snippet.description,
+      youtubeId: video.id.videoId,
+      thumbnailUrl: video.snippet.thumbnails.maxres?.url || video.snippet.thumbnails.high.url,
+      duration: video.contentDetails ? parseDuration(video.contentDetails.duration) : "0:00",
+      publishedAt: video.snippet.publishedAt,
+      stats: {
+        id: `temp_stats_${video.id.videoId}`,
+        videoId: `temp_${video.id.videoId}`,
+        totalViews: parseInt(video.statistics?.viewCount || '0'),
+        weeklyViews: Math.floor(parseInt(video.statistics?.viewCount || '0') * 0.1),
+        monthlyViews: Math.floor(parseInt(video.statistics?.viewCount || '0') * 0.3),
+        lastUpdated: new Date().toISOString()
+      },
+      keywords: keywords,
+      category: '', // Will be set by the API endpoint
+      createdAt: new Date().toISOString(),
+      isActive: true
+    }));
+
+    console.log(`📊 Found ${transformedVideos.length} real-time results`);
+    return transformedVideos;
+    
+  } catch (error) {
+    console.error('❌ Real-time YouTube search error:', error);
+    return [];
+  }
+}
+
 export async function refreshVideoStats(): Promise<void> {
   try {
     const videos = await storage.getVideos();
