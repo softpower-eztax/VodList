@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="videoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Video camera body -->
+  <rect x="4" y="10" width="20" height="14" rx="2" ry="2" fill="url(#videoGradient)" stroke="#1e40af" stroke-width="0.5"/>
+  
+  <!-- Camera lens -->
+  <circle cx="14" cy="17" r="4" fill="#f8fafc" stroke="#1e40af" stroke-width="0.5"/>
+  <circle cx="14" cy="17" r="2.5" fill="#1e40af"/>
+  <circle cx="14" cy="17" r="1" fill="#f8fafc"/>
+  
+  <!-- Viewfinder -->
+  <rect x="22" y="14" width="4" height="6" rx="1" ry="1" fill="#64748b"/>
+  
+  <!-- Recording indicator -->
+  <circle cx="7" cy="13" r="1" fill="#ef4444"/>
+  
+  <!-- Play button overlay -->
+  <polygon points="12,15 12,19 16,17" fill="#f8fafc" opacity="0.8"/>
+</svg>

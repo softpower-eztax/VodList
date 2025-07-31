@@ -16,10 +16,9 @@ const languageOptions = [
 ];
 
 const navigationItems = [
+  { key: "Favorite", href: "/favor", active: false },
   { key: "dashboard", href: "/", active: true },
-  { key: "browse", href: "/favor", active: false },
   { key: "categories", href: "/categories", active: false },
-  { key: "favorites", href: "#", active: false },
 ];
 
 export default function Header({
