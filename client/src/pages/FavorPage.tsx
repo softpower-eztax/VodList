@@ -63,28 +63,36 @@ export default function FavorPage() {
   return (
     <div className="container mx-auto py-8">
       {/* Navigation Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white border-b border-gray-200 -mx-8 -mt-8 mb-8 px-8 py-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Heart className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold">Favorite Videos</h1>
+            <div className="w-12 h-12 bg-red-400 rounded-xl flex items-center justify-center">
+              <Heart className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">My Youtube Home</h1>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="w-10 h-10 p-0" data-testid="nav-favorites">
+                <Heart className="w-5 h-5 text-gray-600" />
+              </Button>
+            </Link>
             <Link href="/dashboard">
-              <Button variant="outline" size="sm" data-testid="nav-dashboard">
-                <Home className="w-4 h-4 mr-2" />
-                Dashboard
+              <Button variant="default" size="sm" className="w-10 h-10 p-0 bg-red-400 hover:bg-red-500" data-testid="nav-dashboard">
+                <Home className="w-5 h-5 text-white" />
               </Button>
             </Link>
             <Link href="/admin">
-              <Button variant="outline" size="sm" data-testid="nav-admin">
-                <Settings className="w-4 h-4 mr-2" />
-                Admin
+              <Button variant="ghost" size="sm" className="w-10 h-10 p-0" data-testid="nav-admin">
+                <Settings className="w-5 h-5 text-gray-600" />
               </Button>
             </Link>
           </div>
         </div>
+      </div>
+
+      <div className="mb-8">
         <p className="text-gray-600">Browse your curated collection of favorite videos.</p>
         
         {/* Filter Controls */}
