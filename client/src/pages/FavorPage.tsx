@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Play } from "lucide-react";
-import { type FavorVideo } from "@shared/schema";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ExternalLink, Play, Filter } from "lucide-react";
+import { type FavorVideo, type Group } from "@shared/schema";
 
 export default function FavorPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedType, setSelectedType] = useState<string>("all");
+
   const { data: favorVideos, isLoading } = useQuery<FavorVideo[]>({
     queryKey: ["/api/favor-videos"],
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ["/api/groups", "Category"],
+    queryFn: async () => {
+      const response = await fetch("/api/groups/type/Category");
+      return response.json() as Promise<Group[]>;
+    },
+  });
+
+  const { data: types } = useQuery({
+    queryKey: ["/api/groups", "Type"],
+    queryFn: async () => {
+      const response = await fetch("/api/groups/type/Type");
+      return response.json() as Promise<Group[]>;
+    },
   });
 
   const extractVideoId = (url: string): string | null => {
@@ -24,6 +44,13 @@ export default function FavorPage() {
       : "/placeholder-video.jpg";
   };
 
+  // Filter videos based on selected category and type
+  const filteredVideos = favorVideos?.filter((video) => {
+    const categoryMatch = selectedCategory === "all" || video.category === selectedCategory;
+    const typeMatch = selectedType === "all" || video.type === selectedType;
+    return categoryMatch && typeMatch;
+  });
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-8">
@@ -36,11 +63,71 @@ export default function FavorPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">Favorite Videos</h1>
-        <p className="text-gray-600">Browse your curated collection of favorite videos.</p>
+        <p className="text-gray-600 mb-6">Browse your curated collection of favorite videos.</p>
+        
+        {/* Filter Controls */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-medium">Filters:</span>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 flex-1">
+            <div className="min-w-[200px]">
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger data-testid="select-category-filter">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories?.map((category) => (
+                    <SelectItem key={category.id} value={category.groupType}>
+                      {category.groupType}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="min-w-[200px]">
+              <Select value={selectedType} onValueChange={setSelectedType}>
+                <SelectTrigger data-testid="select-type-filter">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  {types?.map((type) => (
+                    <SelectItem key={type.id} value={type.groupType}>
+                      {type.groupType}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {(selectedCategory !== "all" || selectedType !== "all") && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSelectedType("all");
+                }}
+                data-testid="button-clear-filters"
+              >
+                Clear Filters
+              </Button>
+            )}
+          </div>
+        </div>
+        
+        {/* Results count */}
+        <div className="text-sm text-gray-500 mb-4">
+          Showing {filteredVideos?.length || 0} of {favorVideos?.length || 0} videos
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {favorVideos?.map((video) => (
+        {filteredVideos?.map((video) => (
           <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-shadow" data-testid={`card-video-${video.id}`}>
             <div className="relative aspect-video bg-gray-200">
               <img
@@ -111,6 +198,26 @@ export default function FavorPage() {
           <p className="text-gray-500">
             Start adding your favorite videos through the admin panel to see them here.
           </p>
+        </div>
+      )}
+
+      {favorVideos && favorVideos.length > 0 && filteredVideos?.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🔍</div>
+          <h3 className="text-xl font-semibold mb-2">No videos match your filters</h3>
+          <p className="text-gray-500 mb-4">
+            Try adjusting your category or type filters to see more videos.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSelectedCategory("all");
+              setSelectedType("all");
+            }}
+            data-testid="button-clear-filters-empty"
+          >
+            Clear All Filters
+          </Button>
         </div>
       )}
     </div>
