@@ -52,10 +52,11 @@ export default function GroupAdminPage() {
         description: "Group created successfully",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Group creation error:", error);
       toast({
         title: "Error",
-        description: "Failed to create group",
+        description: `Failed to create group: ${error.message || "Unknown error"}`,
         variant: "destructive",
       });
     },
@@ -150,11 +151,14 @@ export default function GroupAdminPage() {
               Add Group
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby="group-dialog-description">
             <DialogHeader>
               <DialogTitle>
                 {selectedGroup ? "Edit Group" : "Add New Group"}
               </DialogTitle>
+              <div id="group-dialog-description" className="sr-only">
+                Form to {selectedGroup ? "edit existing" : "create new"} group with name, type and value
+              </div>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

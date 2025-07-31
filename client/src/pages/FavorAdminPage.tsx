@@ -74,10 +74,11 @@ export default function FavorAdminPage() {
         description: "Favor video created successfully",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Favor video creation error:", error);
       toast({
         title: "Error",
-        description: "Failed to create favor video",
+        description: `Failed to create favor video: ${error.message || "Unknown error"}`,
         variant: "destructive",
       });
     },
@@ -174,11 +175,14 @@ export default function FavorAdminPage() {
               Add Favor Video
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg" aria-describedby="favor-video-dialog-description">
             <DialogHeader>
               <DialogTitle>
                 {selectedVideo ? "Edit Favor Video" : "Add New Favor Video"}
               </DialogTitle>
+              <div id="favor-video-dialog-description" className="sr-only">
+                Form to {selectedVideo ? "edit existing" : "create new"} favor video with title, YouTube link, description, category and type
+              </div>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

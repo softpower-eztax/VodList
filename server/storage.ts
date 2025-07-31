@@ -330,7 +330,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteGroup(id: string): Promise<boolean> {
     const result = await db.delete(groups).where(eq(groups.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // FavorVideo methods
@@ -359,7 +359,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteFavorVideo(id: string): Promise<boolean> {
     const result = await db.delete(favorVideos).where(eq(favorVideos.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 }
 
