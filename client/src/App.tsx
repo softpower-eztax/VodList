@@ -14,7 +14,8 @@ function Router() {
   return (
     <Layout>
       <Switch>
-        <Route path="/" component={Dashboard} />
+        <Route path="/" component={FavorPage} />
+        <Route path="/dashboard" component={Dashboard} />
         <Route path="/categories" component={CategoriesPage} />
         <Route path="/favor" component={FavorPage} />
         <Route path="/admin" component={MainAdminPage} />

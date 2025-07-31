@@ -8,9 +8,9 @@ export default function Navigation() {
   const [location] = useLocation();
 
   const navItems = [
-    { path: "/", label: "Dashboard", icon: Home },
+    { path: "/", label: "Favorites", icon: Heart },
+    { path: "/dashboard", label: "Dashboard", icon: Home },
     { path: "/categories", label: "Categories", icon: List },
-    { path: "/favor", label: "Favorites", icon: Heart },
     { path: "/admin", label: "Admin", icon: Settings },
   ];
 
