@@ -42,7 +42,7 @@ export default function GroupAdminPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: GroupFormData) => apiRequest("/api/groups", "POST", data),
+    mutationFn: (data: GroupFormData) => apiRequest("POST", "/api/groups", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
       setIsDialogOpen(false);
@@ -64,7 +64,7 @@ export default function GroupAdminPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: GroupFormData }) =>
-      apiRequest(`/api/groups/${id}`, "PUT", data),
+      apiRequest("PUT", `/api/groups/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
       setIsDialogOpen(false);
@@ -85,7 +85,7 @@ export default function GroupAdminPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/groups/${id}`, "DELETE"),
+    mutationFn: (id: string) => apiRequest("DELETE", `/api/groups/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
       toast({

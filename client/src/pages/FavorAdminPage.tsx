@@ -64,7 +64,7 @@ export default function FavorAdminPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: FavorVideoFormData) => apiRequest("/api/favor-videos", "POST", data),
+    mutationFn: (data: FavorVideoFormData) => apiRequest("POST", "/api/favor-videos", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/favor-videos"] });
       setIsDialogOpen(false);
@@ -86,7 +86,7 @@ export default function FavorAdminPage() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: FavorVideoFormData }) =>
-      apiRequest(`/api/favor-videos/${id}`, "PUT", data),
+      apiRequest("PUT", `/api/favor-videos/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/favor-videos"] });
       setIsDialogOpen(false);
@@ -107,7 +107,7 @@ export default function FavorAdminPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/favor-videos/${id}`, "DELETE"),
+    mutationFn: (id: string) => apiRequest("DELETE", `/api/favor-videos/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/favor-videos"] });
       toast({

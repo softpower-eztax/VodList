@@ -39,6 +39,8 @@ Preferred communication style: Simple, everyday language.
 - **Videos**: Core video metadata including YouTube integration
 - **Categories**: Organized content classification (music, sermon, other)
 - **Video Stats**: View tracking and analytics data
+- **Groups**: Configurable categories and types for content organization
+- **Favor Videos**: User-curated favorite video collection
 - **Relations**: Proper foreign key relationships between entities
 
 ### API Endpoints
@@ -47,6 +49,15 @@ Preferred communication style: Simple, everyday language.
 - `GET /api/videos/top/:category` - Get top videos by category
 - `GET /api/videos/top` - Get overall top videos
 - `GET /api/stats/dashboard` - Dashboard analytics
+- `GET /api/groups` - Retrieve all groups
+- `GET /api/groups/type/:type` - Get groups by type (Category/Type)
+- `POST /api/groups` - Create new group
+- `PUT /api/groups/:id` - Update group
+- `DELETE /api/groups/:id` - Delete group
+- `GET /api/favor-videos` - Retrieve all favorite videos
+- `POST /api/favor-videos` - Create new favorite video
+- `PUT /api/favor-videos/:id` - Update favorite video
+- `DELETE /api/favor-videos/:id` - Delete favorite video
 
 ### Core Features
 - **Dashboard**: Top 10 videos display with category filtering
@@ -55,6 +66,9 @@ Preferred communication style: Simple, everyday language.
 - **Responsive UI**: Mobile and desktop optimized interfaces
 - **Search Functionality**: Real-time video search across titles and keywords
 - **Sorting Options**: Multiple sorting criteria (popular, recent, most viewed)
+- **Admin Panel**: Complete CRUD operations for groups and favorite videos
+- **Favorite Videos**: Curated video collection with categorization
+- **Group Management**: Dynamic category and type management system
 
 ## Data Flow
 
