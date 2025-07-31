@@ -72,22 +72,20 @@ export default function FavorPage() {
             <h1 className="text-2xl font-bold text-gray-800">My Youtube Home</h1>
           </div>
           
-          <div className="flex items-center space-x-3">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="w-10 h-10 p-0" data-testid="nav-favorites">
-                <Heart className="w-5 h-5 text-gray-600" />
-              </Button>
-            </Link>
-            <Link href="/dashboard">
-              <Button variant="default" size="sm" className="w-10 h-10 p-0 bg-red-400 hover:bg-red-500" data-testid="nav-dashboard">
-                <Home className="w-5 h-5 text-white" />
-              </Button>
-            </Link>
-            <Link href="/admin">
-              <Button variant="ghost" size="sm" className="w-10 h-10 p-0" data-testid="nav-admin">
-                <Settings className="w-5 h-5 text-gray-600" />
-              </Button>
-            </Link>
+          <div className="flex items-center space-x-4">
+            {/* Language Selector */}
+            <div className="relative">
+              <button className="flex items-center space-x-2 px-4 py-2 border-2 border-red-400 rounded-full bg-white hover:bg-gray-50 transition-colors">
+                <span className="text-xl">🇺🇸</span>
+                <span className="font-medium text-gray-800">EN</span>
+                <ChevronDown className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
+            
+            {/* Hamburger Menu */}
+            <button className="p-2">
+              <Menu className="w-6 h-6 text-gray-600" />
+            </button>
           </div>
         </div>
       </div>
