@@ -17,7 +17,7 @@ export default function Navigation() {
     <nav className="bg-white border-b border-gray-200 px-4 py-3">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-bold text-primary">MyVideo</h1>
+          <h1 className="text-xl font-bold text-primary">My Youtube </h1>
           <div className="hidden md:flex space-x-2">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -29,7 +29,7 @@ export default function Navigation() {
                     size="sm"
                     className={cn(
                       "flex items-center space-x-2",
-                      isActive && "bg-primary text-primary-foreground"
+                      isActive && "bg-primary text-primary-foreground",
                     )}
                     data-testid={`nav-${item.label.toLowerCase()}`}
                   >
@@ -41,7 +41,7 @@ export default function Navigation() {
             })}
           </div>
         </div>
-        
+
         {/* Mobile navigation */}
         <div className="md:hidden flex space-x-1">
           {navItems.map((item) => {
@@ -54,7 +54,7 @@ export default function Navigation() {
                   size="sm"
                   className={cn(
                     "p-2",
-                    isActive && "bg-primary text-primary-foreground"
+                    isActive && "bg-primary text-primary-foreground",
                   )}
                   data-testid={`nav-mobile-${item.label.toLowerCase()}`}
                 >

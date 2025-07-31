@@ -39,7 +39,9 @@ export default function Header({
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <i className="fas fa-play text-white text-lg"></i>
               </div>
-              <span className="text-2xl font-bold text-dark">MyVideo</span>
+              <span className="text-2xl font-bold text-dark">
+                My Youtube Home
+              </span>
             </div>
 
             {/* Navigation */}
