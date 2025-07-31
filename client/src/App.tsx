@@ -8,6 +8,8 @@ import Dashboard from "@/pages/Dashboard";
 import CategoriesPage from "@/pages/CategoriesPage";
 import FavorPage from "@/pages/FavorPage";
 import MainAdminPage from "@/pages/MainAdminPage";
+import GroupAdminPage from "@/pages/GroupAdminPage";
+import FavorAdminPage from "@/pages/FavorAdminPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -16,9 +18,11 @@ function Router() {
       <Switch>
         <Route path="/" component={FavorPage} />
         <Route path="/dashboard" component={Dashboard} />
-        <Route path="/categories" component={CategoriesPage} />
         <Route path="/favor" component={FavorPage} />
         <Route path="/admin" component={MainAdminPage} />
+        <Route path="/admin/categories" component={CategoriesPage} />
+        <Route path="/admin/groups" component={GroupAdminPage} />
+        <Route path="/admin/favor" component={FavorAdminPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
