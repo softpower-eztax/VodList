@@ -63,30 +63,29 @@ export default function FavorPage() {
   return (
     <div className="container mx-auto py-8">
       {/* Navigation Header */}
-      <nav className="flex items-center justify-between mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-        <div className="flex items-center space-x-4">
-          <Heart className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold">Favorite Videos</h1>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm" data-testid="nav-dashboard">
-              <Home className="w-4 h-4 mr-2" />
-              Dashboard
-            </Button>
-          </Link>
-          <Link href="/admin">
-            <Button variant="outline" size="sm" data-testid="nav-admin">
-              <Settings className="w-4 h-4 mr-2" />
-              Admin
-            </Button>
-          </Link>
-        </div>
-      </nav>
-
       <div className="mb-8">
-        <p className="text-gray-600 mb-6">Browse your curated collection of favorite videos.</p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <Heart className="w-8 h-8 text-primary" />
+            <h1 className="text-3xl font-bold">Favorite Videos</h1>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Link href="/dashboard">
+              <Button variant="outline" size="sm" data-testid="nav-dashboard">
+                <Home className="w-4 h-4 mr-2" />
+                Dashboard
+              </Button>
+            </Link>
+            <Link href="/admin">
+              <Button variant="outline" size="sm" data-testid="nav-admin">
+                <Settings className="w-4 h-4 mr-2" />
+                Admin
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <p className="text-gray-600">Browse your curated collection of favorite videos.</p>
         
         {/* Filter Controls */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
