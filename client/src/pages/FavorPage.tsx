@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExternalLink, Play, Filter, Heart, Home, Settings } from "lucide-react";
+import { ExternalLink, Play, Filter, Heart, Home, Settings, Menu, ChevronDown } from "lucide-react";
 import { Link } from "wouter";
 import { type FavorVideo, type Group } from "@shared/schema";
 
