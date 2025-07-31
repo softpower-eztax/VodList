@@ -3,6 +3,8 @@ import {
   videos,
   categories,
   videoStats,
+  groups,
+  favorVideos,
   type Video,
   type Category,
   type VideoStats,
@@ -12,6 +14,10 @@ import {
   type VideoWithStats,
   type User,
   type InsertUser,
+  type Group,
+  type InsertGroup,
+  type FavorVideo,
+  type InsertFavorVideo,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql, and, inArray } from "drizzle-orm";
@@ -61,6 +67,20 @@ export interface IStorage {
     totalViews: number;
     categoriesCount: number;
   }>;
+
+  // Group methods
+  getGroups(): Promise<Group[]>;
+  getGroupsByType(type: string): Promise<Group[]>;
+  createGroup(group: InsertGroup): Promise<Group>;
+  updateGroup(id: string, group: Partial<InsertGroup>): Promise<Group | undefined>;
+  deleteGroup(id: string): Promise<boolean>;
+
+  // FavorVideo methods
+  getFavorVideos(): Promise<FavorVideo[]>;
+  getFavorVideoById(id: string): Promise<FavorVideo | undefined>;
+  createFavorVideo(favorVideo: InsertFavorVideo): Promise<FavorVideo>;
+  updateFavorVideo(id: string, favorVideo: Partial<InsertFavorVideo>): Promise<FavorVideo | undefined>;
+  deleteFavorVideo(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -283,6 +303,63 @@ export class DatabaseStorage implements IStorage {
       totalViews: viewsTotal.total,
       categoriesCount: categoryCount.count,
     };
+  }
+
+  // Group methods
+  async getGroups(): Promise<Group[]> {
+    return await db.select().from(groups);
+  }
+
+  async getGroupsByType(type: string): Promise<Group[]> {
+    return await db.select().from(groups).where(eq(groups.groupName, type));
+  }
+
+  async createGroup(insertGroup: InsertGroup): Promise<Group> {
+    const [group] = await db.insert(groups).values(insertGroup).returning();
+    return group;
+  }
+
+  async updateGroup(id: string, updateGroup: Partial<InsertGroup>): Promise<Group | undefined> {
+    const [group] = await db
+      .update(groups)
+      .set(updateGroup)
+      .where(eq(groups.id, id))
+      .returning();
+    return group || undefined;
+  }
+
+  async deleteGroup(id: string): Promise<boolean> {
+    const result = await db.delete(groups).where(eq(groups.id, id));
+    return result.rowCount > 0;
+  }
+
+  // FavorVideo methods
+  async getFavorVideos(): Promise<FavorVideo[]> {
+    return await db.select().from(favorVideos);
+  }
+
+  async getFavorVideoById(id: string): Promise<FavorVideo | undefined> {
+    const [favorVideo] = await db.select().from(favorVideos).where(eq(favorVideos.id, id));
+    return favorVideo || undefined;
+  }
+
+  async createFavorVideo(insertFavorVideo: InsertFavorVideo): Promise<FavorVideo> {
+    const [favorVideo] = await db.insert(favorVideos).values(insertFavorVideo).returning();
+    return favorVideo;
+  }
+
+  async updateFavorVideo(id: string, updateFavorVideo: Partial<InsertFavorVideo>): Promise<FavorVideo | undefined> {
+    const [favorVideo] = await db
+      .update(favorVideos)
+      .set(updateFavorVideo)
+      .where(eq(favorVideos.id, id))
+      .returning();
+    return favorVideo || undefined;
+  }
+
+  async deleteFavorVideo(id: string): Promise<boolean> {
+    const result = await db.delete(favorVideos).where(eq(favorVideos.id, id));
+    return result.rowCount > 0;
   }
 }
 

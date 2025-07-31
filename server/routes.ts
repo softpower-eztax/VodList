@@ -251,6 +251,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Group routes
+  app.get("/api/groups", async (req, res) => {
+    try {
+      const groups = await storage.getGroups();
+      res.json(groups);
+    } catch (error) {
+      console.error("Error getting groups:", error);
+      res.status(500).json({ error: "Failed to get groups" });
+    }
+  });
+
+  app.get("/api/groups/type/:type", async (req, res) => {
+    try {
+      const { type } = req.params;
+      const groups = await storage.getGroupsByType(type);
+      res.json(groups);
+    } catch (error) {
+      console.error("Error getting groups by type:", error);
+      res.status(500).json({ error: "Failed to get groups by type" });
+    }
+  });
+
+  app.post("/api/groups", async (req, res) => {
+    try {
+      const { groupName, groupType, groupValue } = req.body;
+      const group = await storage.createGroup({
+        groupName,
+        groupType,
+        groupValue,
+      });
+      res.status(201).json(group);
+    } catch (error) {
+      console.error("Error creating group:", error);
+      res.status(500).json({ error: "Failed to create group" });
+    }
+  });
+
+  app.put("/api/groups/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { groupName, groupType, groupValue } = req.body;
+      const group = await storage.updateGroup(id, {
+        groupName,
+        groupType,
+        groupValue,
+      });
+      if (!group) {
+        return res.status(404).json({ error: "Group not found" });
+      }
+      res.json(group);
+    } catch (error) {
+      console.error("Error updating group:", error);
+      res.status(500).json({ error: "Failed to update group" });
+    }
+  });
+
+  app.delete("/api/groups/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.deleteGroup(id);
+      if (!success) {
+        return res.status(404).json({ error: "Group not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting group:", error);
+      res.status(500).json({ error: "Failed to delete group" });
+    }
+  });
+
+  // FavorVideo routes
+  app.get("/api/favor-videos", async (req, res) => {
+    try {
+      const favorVideos = await storage.getFavorVideos();
+      res.json(favorVideos);
+    } catch (error) {
+      console.error("Error getting favor videos:", error);
+      res.status(500).json({ error: "Failed to get favor videos" });
+    }
+  });
+
+  app.get("/api/favor-videos/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const favorVideo = await storage.getFavorVideoById(id);
+      if (!favorVideo) {
+        return res.status(404).json({ error: "Favor video not found" });
+      }
+      res.json(favorVideo);
+    } catch (error) {
+      console.error("Error getting favor video:", error);
+      res.status(500).json({ error: "Failed to get favor video" });
+    }
+  });
+
+  app.post("/api/favor-videos", async (req, res) => {
+    try {
+      const { title, youTubeLink, description, category, type } = req.body;
+      const favorVideo = await storage.createFavorVideo({
+        title,
+        youTubeLink,
+        description,
+        category,
+        type,
+      });
+      res.status(201).json(favorVideo);
+    } catch (error) {
+      console.error("Error creating favor video:", error);
+      res.status(500).json({ error: "Failed to create favor video" });
+    }
+  });
+
+  app.put("/api/favor-videos/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { title, youTubeLink, description, category, type } = req.body;
+      const favorVideo = await storage.updateFavorVideo(id, {
+        title,
+        youTubeLink,
+        description,
+        category,
+        type,
+      });
+      if (!favorVideo) {
+        return res.status(404).json({ error: "Favor video not found" });
+      }
+      res.json(favorVideo);
+    } catch (error) {
+      console.error("Error updating favor video:", error);
+      res.status(500).json({ error: "Failed to update favor video" });
+    }
+  });
+
+  app.delete("/api/favor-videos/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = await storage.deleteFavorVideo(id);
+      if (!success) {
+        return res.status(404).json({ error: "Favor video not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting favor video:", error);
+      res.status(500).json({ error: "Failed to delete favor video" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

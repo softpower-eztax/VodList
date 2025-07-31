@@ -60,6 +60,25 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
   videos: many(videos),
 }));
 
+// Group table for categories and types
+export const groups = pgTable("groups", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  groupName: varchar("group_name", { length: 100 }).notNull(),
+  groupType: varchar("group_type", { length: 100 }).notNull(),
+  groupValue: integer("group_value").notNull(),
+});
+
+// FavorVideo table for favorite videos
+export const favorVideos = pgTable("favor_videos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title", { length: 100 }).notNull(),
+  youTubeLink: varchar("youtube_link", { length: 100 }).notNull(),
+  description: varchar("description", { length: 200 }),
+  category: varchar("category", { length: 100 }).notNull(),
+  type: varchar("type", { length: 100 }).notNull(),
+  createdAt: timestamp("created_at").default(sql`now()`),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -89,6 +108,20 @@ export const insertVideoStatsSchema = createInsertSchema(videoStats).pick({
   monthlyViews: true,
 });
 
+export const insertGroupSchema = createInsertSchema(groups).pick({
+  groupName: true,
+  groupType: true,
+  groupValue: true,
+});
+
+export const insertFavorVideoSchema = createInsertSchema(favorVideos).pick({
+  title: true,
+  youTubeLink: true,
+  description: true,
+  category: true,
+  type: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
@@ -104,3 +137,9 @@ export type VideoStats = typeof videoStats.$inferSelect;
 export type VideoWithStats = Video & {
   stats?: VideoStats;
 };
+
+export type InsertGroup = z.infer<typeof insertGroupSchema>;
+export type Group = typeof groups.$inferSelect;
+
+export type InsertFavorVideo = z.infer<typeof insertFavorVideoSchema>;
+export type FavorVideo = typeof favorVideos.$inferSelect;

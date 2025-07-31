@@ -1,245 +1,118 @@
-import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, ArrowLeft } from "lucide-react";
-import { type Category, type InsertCategory } from "@shared/schema";
-import { type Language, getTranslation } from "@/lib/i18n";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import CategoryForm from "@/components/CategoryForm";
-import CategoryList from "@/components/CategoryList";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink, Play } from "lucide-react";
+import { type FavorVideo } from "@shared/schema";
 
 export default function FavorPage() {
-  const [language, setLanguage] = useState<Language>("en");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<
-    Category | undefined
-  >();
-  const { toast } = useToast();
-
-  // Fetch categories
-  const { data: categories = [], isLoading } = useQuery({
-    queryKey: ["/api/categories"],
-    select: (data: Category[]) => {
-      if (!data) return [];
-
-      // Apply search filter
-      if (searchQuery) {
-        return data.filter(
-          (category) =>
-            category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            category.description
-              ?.toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            category.keywords?.some((keyword) =>
-              keyword.toLowerCase().includes(searchQuery.toLowerCase()),
-            ),
-        );
-      }
-      return data;
-    },
+  const { data: favorVideos, isLoading } = useQuery<FavorVideo[]>({
+    queryKey: ["/api/favor-videos"],
   });
 
-  // Create category mutation
-  const createMutation = useMutation({
-    mutationFn: (data: InsertCategory) =>
-      apiRequest("POST", "/api/categories", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      setShowForm(false);
-      setEditingCategory(undefined);
-      toast({
-        title: getTranslation("success", language),
-        description: getTranslation("category_created_success", language),
-      });
-    },
-    onError: () => {
-      toast({
-        title: getTranslation("error", language),
-        description: getTranslation("category_create_error", language),
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Update category mutation
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<InsertCategory> }) =>
-      apiRequest("PATCH", `/api/categories/${id}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      setShowForm(false);
-      setEditingCategory(undefined);
-      toast({
-        title: getTranslation("success", language),
-        description: getTranslation("category_updated_success", language),
-      });
-    },
-    onError: () => {
-      toast({
-        title: getTranslation("error", language),
-        description: getTranslation("category_update_error", language),
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Delete category mutation
-  const [deletingId, setDeletingId] = useState<string>();
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiRequest("DELETE", `/api/categories/${id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      setDeletingId(undefined);
-      toast({
-        title: getTranslation("success", language),
-        description: getTranslation("category_deleted_success", language),
-      });
-    },
-    onError: () => {
-      setDeletingId(undefined);
-      toast({
-        title: getTranslation("error", language),
-        description: getTranslation("category_delete_error", language),
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleSubmit = (data: InsertCategory) => {
-    if (editingCategory) {
-      updateMutation.mutate({ id: editingCategory.id, data });
-    } else {
-      createMutation.mutate(data);
-    }
+  const extractVideoId = (url: string): string | null => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
-  const handleEdit = (category: Category) => {
-    setEditingCategory(category);
-    setShowForm(true);
+  const getThumbnailUrl = (youtubeUrl: string): string => {
+    const videoId = extractVideoId(youtubeUrl);
+    return videoId 
+      ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+      : "/placeholder-video.jpg";
   };
 
-  const handleDelete = (categoryId: string) => {
-    try {
-      if (confirm(getTranslation("confirm_delete_category", language))) {
-        setDeletingId(categoryId);
-        deleteMutation.mutate(categoryId);
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast({
-        title: getTranslation("error", language),
-        description: getTranslation("category_delete_error", language),
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleCancel = () => {
-    setShowForm(false);
-    setEditingCategory(undefined);
-  };
-
-  const handleCreateNew = () => {
-    setEditingCategory(undefined);
-    setShowForm(true);
-  };
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center">Loading favorite videos...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-light">
-      <Header
-        language={language}
-        onLanguageChange={setLanguage}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+    <div className="container mx-auto py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-4">Favorite Videos</h1>
+        <p className="text-gray-600">Browse your curated collection of favorite videos.</p>
+      </div>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                try {
-                  window.location.href = "/";
-                } catch (error) {
-                  console.error("Navigation error:", error);
-                }
-              }}
-              data-testid="back-to-dashboard"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              {getTranslation("back_to_dashboard", language)}
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-dark mb-2">
-                {getTranslation("manage_categories", language)}
-              </h1>
-              <p className="text-gray-600">
-                {getTranslation("manage_categories_description", language)}
-              </p>
-            </div>
-
-            {!showForm && (
-              <Button
-                onClick={handleCreateNew}
-                className="bg-primary hover:bg-red-600"
-                data-testid="create-category-button"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {getTranslation("create_category", language)}
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Content */}
-        {showForm ? (
-          <CategoryForm
-            category={editingCategory}
-            language={language}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-            isLoading={createMutation.isPending || updateMutation.isPending}
-          />
-        ) : (
-          <>
-            {/* Categories List */}
-            {isLoading ? (
-              <div className="space-y-4">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse"
-                  >
-                    <div className="bg-gray-200 h-6 rounded mb-3 w-1/3"></div>
-                    <div className="bg-gray-200 h-4 rounded mb-2"></div>
-                    <div className="bg-gray-200 h-4 rounded w-2/3"></div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <CategoryList
-                categories={categories}
-                language={language}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                isDeleteLoading={deletingId}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {favorVideos?.map((video) => (
+          <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-shadow" data-testid={`card-video-${video.id}`}>
+            <div className="relative aspect-video bg-gray-200">
+              <img
+                src={getThumbnailUrl(video.youTubeLink)}
+                alt={video.title}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://via.placeholder.com/320x180?text=Video+Thumbnail";
+                }}
               />
+              <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center group">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => window.open(video.youTubeLink, "_blank")}
+                  data-testid={`button-play-${video.id}`}
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Watch
+                </Button>
+              </div>
+            </div>
+            
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg line-clamp-2" title={video.title}>
+                {video.title}
+              </CardTitle>
+              <div className="flex gap-2">
+                <Badge variant="secondary" className="text-xs">
+                  {video.category}
+                </Badge>
+                <Badge variant="outline" className="text-xs">
+                  {video.type}
+                </Badge>
+              </div>
+            </CardHeader>
+            
+            {video.description && (
+              <CardContent className="pt-0">
+                <CardDescription className="line-clamp-3">
+                  {video.description}
+                </CardDescription>
+              </CardContent>
             )}
-          </>
-        )}
-      </main>
+            
+            <CardContent className="pt-0 pb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => window.open(video.youTubeLink, "_blank")}
+                data-testid={`button-view-${video.id}`}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Watch on YouTube
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-      <Footer language={language} />
+      {favorVideos?.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">📺</div>
+          <h3 className="text-xl font-semibold mb-2">No favorite videos yet</h3>
+          <p className="text-gray-500">
+            Start adding your favorite videos through the admin panel to see them here.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
