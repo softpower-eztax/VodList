@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { type Language } from "@/lib/i18n";
+
+import { type Language, getTranslation } from "@/lib/i18n";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Card,
@@ -18,13 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  ExternalLink,
-  Play,
-  Filter,
-  Heart,
-  Menu,
-} from "lucide-react";
+import { ExternalLink, Play, Filter, Heart, Menu } from "lucide-react";
 import { type FavorVideo, type Group } from "@shared/schema";
 
 export default function FavorPage() {
@@ -85,8 +80,11 @@ export default function FavorPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
+        <h1 className="text-3xl font-bold text-dark mb-2">
+          {getTranslation("favor_title", language)}
+        </h1>
         <p className="text-gray-600 mb-3">
-          Browse your curated collection of favorite videos.
+          {getTranslation("favor_subtitle", language)}
         </p>
 
         {/* Filter Controls */}

@@ -15,11 +15,16 @@ export const translations: Translations = {
 
     // Dashboard
     dashboard_title: "Top Videos Dashboard",
-    dashboard_subtitle: "Discover the most popular videos across all categories",
+    dashboard_subtitle:
+      "Discover the most popular videos across all categories",
     all_categories: "All Categories",
     music: "Music",
     sermons: "Sermons",
     other: "Other",
+
+    // favor
+    favor_title: "Top Videos Dashboard",
+    favor_subtitle: "Browse your curated collection of favorite videos.",
 
     // Stats
     total_videos: "Total Videos",
@@ -36,7 +41,8 @@ export const translations: Translations = {
     load_more: "Load More Videos",
 
     // Footer
-    footer_description: "Discover and enjoy the best spiritual content from around the world. Connect with faith through music, sermons, and educational videos.",
+    footer_description:
+      "Discover and enjoy the best spiritual content from around the world. Connect with faith through music, sermons, and educational videos.",
     quick_links: "Quick Links",
     browse_videos: "Browse Videos",
     upload_video: "Upload Video",
@@ -46,7 +52,8 @@ export const translations: Translations = {
     privacy_policy: "Privacy Policy",
     terms_of_service: "Terms of Service",
     community_guidelines: "Community Guidelines",
-    copyright: "© 2024 MyVideo. All rights reserved. Built with ❤️ for the faith community.",
+    copyright:
+      "© 2024 MyVideo. All rights reserved. Built with ❤️ for the faith community.",
 
     // Video metadata
     views: "views",
@@ -57,7 +64,8 @@ export const translations: Translations = {
 
     // Category management
     manage_categories: "Manage Categories",
-    manage_categories_description: "Create, edit, and organize video categories",
+    manage_categories_description:
+      "Create, edit, and organize video categories",
     create_category: "Create Category",
     edit_category: "Edit Category",
     update_category: "Update Category",
@@ -94,11 +102,16 @@ export const translations: Translations = {
 
     // Dashboard
     dashboard_title: "Panel de Videos Principales",
-    dashboard_subtitle: "Descubre los videos más populares en todas las categorías",
+    dashboard_subtitle:
+      "Descubre los videos más populares en todas las categorías",
     all_categories: "Todas las Categorías",
     music: "Música",
     sermons: "Sermones",
     other: "Otros",
+
+    // favor
+    favor_title: "Panel de Videos Principales",
+    favor_subtitle: "Explora tu colección curada de videos favoritos.",
 
     // Stats
     total_videos: "Videos Totales",
@@ -115,7 +128,8 @@ export const translations: Translations = {
     load_more: "Cargar Más Videos",
 
     // Footer
-    footer_description: "Descubre y disfruta del mejor contenido espiritual de todo el mundo. Conecta con la fe a través de música, sermones y videos educativos.",
+    footer_description:
+      "Descubre y disfruta del mejor contenido espiritual de todo el mundo. Conecta con la fe a través de música, sermones y videos educativos.",
     quick_links: "Enlaces Rápidos",
     browse_videos: "Explorar Videos",
     upload_video: "Subir Video",
@@ -125,7 +139,8 @@ export const translations: Translations = {
     privacy_policy: "Política de Privacidad",
     terms_of_service: "Términos de Servicio",
     community_guidelines: "Directrices de la Comunidad",
-    copyright: "© 2024 MyVideo. Todos los derechos reservados. Hecho con ❤️ para la comunidad de fe.",
+    copyright:
+      "© 2024 MyVideo. Todos los derechos reservados. Hecho con ❤️ para la comunidad de fe.",
 
     // Video metadata
     views: "visualizaciones",
@@ -136,7 +151,8 @@ export const translations: Translations = {
 
     // Category management
     manage_categories: "Gestionar Categorías",
-    manage_categories_description: "Crear, editar y organizar categorías de videos",
+    manage_categories_description:
+      "Crear, editar y organizar categorías de videos",
     create_category: "Crear Categoría",
     edit_category: "Editar Categoría",
     update_category: "Actualizar Categoría",
@@ -161,7 +177,8 @@ export const translations: Translations = {
     category_create_error: "Error al crear la categoría",
     category_update_error: "Error al actualizar la categoría",
     category_delete_error: "Error al eliminar la categoría",
-    confirm_delete_category: "¿Está seguro de que desea eliminar esta categoría?",
+    confirm_delete_category:
+      "¿Está seguro de que desea eliminar esta categoría?",
   },
   ko: {
     // Header
@@ -179,6 +196,10 @@ export const translations: Translations = {
     sermons: "설교",
     other: "기타",
 
+    // favor
+    favor_title: "인기 비디오 대시보드",
+    favor_subtitle: "큐레이션된 즐겨찾기 비디오 컬렉션을 탐색하세요.",
+
     // Stats
     total_videos: "총 비디오",
     total_views: "총 조회수",
@@ -194,7 +215,8 @@ export const translations: Translations = {
     load_more: "더 많은 비디오 로드",
 
     // Footer
-    footer_description: "전 세계 최고의 영적 콘텐츠를 발견하고 즐기세요. 음악, 설교, 교육 비디오를 통해 믿음과 연결하세요.",
+    footer_description:
+      "전 세계 최고의 영적 콘텐츠를 발견하고 즐기세요. 음악, 설교, 교육 비디오를 통해 믿음과 연결하세요.",
     quick_links: "빠른 링크",
     browse_videos: "비디오 탐색",
     upload_video: "비디오 업로드",
@@ -252,25 +274,25 @@ export const getTranslation = (key: string, language: Language): string => {
 
 export const formatViews = (views: number, language: Language): string => {
   if (views >= 1000000) {
-    return `${(views / 1000000).toFixed(1)}M ${getTranslation('views', language)}`;
+    return `${(views / 1000000).toFixed(1)}M ${getTranslation("views", language)}`;
   } else if (views >= 1000) {
-    return `${(views / 1000).toFixed(1)}K ${getTranslation('views', language)}`;
+    return `${(views / 1000).toFixed(1)}K ${getTranslation("views", language)}`;
   }
-  return `${views} ${getTranslation('views', language)}`;
+  return `${views} ${getTranslation("views", language)}`;
 };
 
 export const formatTimeAgo = (date: Date, language: Language): string => {
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - date.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays < 7) {
-    return `${diffDays} ${getTranslation('days', language)} ${getTranslation('ago', language)}`;
+    return `${diffDays} ${getTranslation("days", language)} ${getTranslation("ago", language)}`;
   } else if (diffDays < 30) {
     const weeks = Math.floor(diffDays / 7);
-    return `${weeks} ${getTranslation('weeks', language)} ${getTranslation('ago', language)}`;
+    return `${weeks} ${getTranslation("weeks", language)} ${getTranslation("ago", language)}`;
   } else {
     const months = Math.floor(diffDays / 30);
-    return `${months} ${getTranslation('months', language)} ${getTranslation('ago', language)}`;
+    return `${months} ${getTranslation("months", language)} ${getTranslation("ago", language)}`;
   }
 };
