@@ -23,7 +23,7 @@ export default function Dashboard() {
   const { language, setLanguage } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
-  const [sortBy, setSortBy] = useState("most_recent");
+  const [sortBy, setSortBy] = useState("recent");
   const [loadedVideos, setLoadedVideos] = useState<VideoWithStats[]>([]);
   const [lastLoadedCategory, setLastLoadedCategory] = useState<string>("");
 
@@ -165,7 +165,7 @@ export default function Dashboard() {
               </span>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-40" data-testid="sort-selector">
-                  <SelectValue />
+                  <SelectValue placeholder={getTranslation("most_recent", language)} />
                 </SelectTrigger>
                 <SelectContent>
                   {sortOptions.map(({ value, labelKey }) => (
