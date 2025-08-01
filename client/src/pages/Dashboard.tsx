@@ -51,7 +51,11 @@ export default function Dashboard() {
   });
 
   // Fetch videos based on active category using real-time search
-  const { data: fetchedVideos, isLoading: videosLoading, refetch: refetchVideos } = useQuery({
+  const {
+    data: fetchedVideos,
+    isLoading: videosLoading,
+    refetch: refetchVideos,
+  } = useQuery({
     queryKey: ["/api/videos/search", activeCategory],
     enabled: false, // Disabled by default - will be triggered by populate button
     staleTime: 0, // Always fetch fresh data
@@ -71,8 +75,9 @@ export default function Dashboard() {
 
   // Process videos for display (use loaded videos if they match current category, otherwise empty)
   const displayVideos = React.useMemo(() => {
-    const videosToProcess = lastLoadedCategory === activeCategory ? loadedVideos : [];
-    
+    const videosToProcess =
+      lastLoadedCategory === activeCategory ? loadedVideos : [];
+
     if (!videosToProcess || videosToProcess.length === 0) return [];
 
     // Apply search filter
@@ -81,7 +86,9 @@ export default function Dashboard() {
       filteredVideos = videosToProcess.filter(
         (video) =>
           video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          video.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          video.description
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           video.keywords?.some((keyword) =>
             keyword.toLowerCase().includes(searchQuery.toLowerCase()),
           ),
@@ -114,13 +121,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-light">
-      <Header
-        language={language}
-        onLanguageChange={setLanguage}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Dashboard Title */}
         <div className="mb-8">
@@ -140,15 +140,15 @@ export default function Dashboard() {
         />
 
         {/* Video Populator */}
-        <VideoPopulator 
-          language={language} 
+        <VideoPopulator
+          language={language}
           onPopulate={async () => {
             const result = await refetchVideos();
             if (result.data) {
               setLoadedVideos(result.data);
               setLastLoadedCategory(activeCategory);
             }
-          }} 
+          }}
         />
 
         {/* Stats Cards */}
@@ -225,8 +225,8 @@ export default function Dashboard() {
                 {searchQuery
                   ? `No videos found for "${searchQuery}"`
                   : lastLoadedCategory === activeCategory
-                  ? "No videos found for this category"
-                  : `Click "Load Videos for Category" to load fresh content for ${getTranslation(activeCategory, language)}`}
+                    ? "No videos found for this category"
+                    : `Click "Load Videos for Category" to load fresh content for ${getTranslation(activeCategory, language)}`}
               </p>
             </div>
           )}

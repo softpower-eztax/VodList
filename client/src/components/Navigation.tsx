@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Home, List, Heart, Settings } from "lucide-react";
+import { Home, Heart, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getTranslation, type Language } from "@/lib/i18n";
+import { type Language } from "@/lib/i18n";
 import { useLanguage } from "@/contexts/LanguageContext";
 export default function Navigation() {
   const { language, setLanguage } = useLanguage();
