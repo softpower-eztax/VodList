@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { type VideoWithStats } from "@shared/schema";
 import { type Language, getTranslation } from "@/lib/i18n";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryTabs from "@/components/CategoryTabs";
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/select";
 
 export default function Dashboard() {
-  const [language, setLanguage] = useState<Language>("en");
+  const { language, setLanguage } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
   const [sortBy, setSortBy] = useState("popular");

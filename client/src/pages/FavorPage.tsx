@@ -1,14 +1,39 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { type Language, getTranslation } from "@/lib/i18n";
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExternalLink, Play, Filter, Heart, Home, Settings, Menu, ChevronDown } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  ExternalLink,
+  Play,
+  Filter,
+  Heart,
+  Home,
+  Settings,
+  Menu,
+  ChevronDown,
+} from "lucide-react";
 import { Link } from "wouter";
 import { type FavorVideo, type Group } from "@shared/schema";
 
 export default function FavorPage() {
+  const { language, setLanguage } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedType, setSelectedType] = useState<string>("all");
 
@@ -33,21 +58,23 @@ export default function FavorPage() {
   });
 
   const extractVideoId = (url: string): string | null => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
 
   const getThumbnailUrl = (youtubeUrl: string): string => {
     const videoId = extractVideoId(youtubeUrl);
-    return videoId 
+    return videoId
       ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
       : "/placeholder-video.jpg";
   };
 
   // Filter videos based on selected category and type
   const filteredVideos = favorVideos?.filter((video) => {
-    const categoryMatch = selectedCategory === "all" || video.category === selectedCategory;
+    const categoryMatch =
+      selectedCategory === "all" || video.category === selectedCategory;
     const typeMatch = selectedType === "all" || video.type === selectedType;
     return categoryMatch && typeMatch;
   });
@@ -62,47 +89,24 @@ export default function FavorPage() {
 
   return (
     <div className="container mx-auto py-8">
-      {/* Navigation Header */}
-      <div className="bg-white border-b border-gray-200 -mx-8 -mt-8 mb-8 px-8 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-red-400 rounded-xl flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">My Youtube Home</h1>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            {/* Language Selector */}
-            <div className="relative">
-              <button className="flex items-center space-x-2 px-4 py-2 border-2 border-red-400 rounded-full bg-white hover:bg-gray-50 transition-colors">
-                <span className="text-xl">🇺🇸</span>
-                <span className="font-medium text-gray-800">EN</span>
-                <ChevronDown className="w-4 h-4 text-gray-600" />
-              </button>
-            </div>
-            
-            {/* Hamburger Menu */}
-            <button className="p-2">
-              <Menu className="w-6 h-6 text-gray-600" />
-            </button>
-          </div>
-        </div>
-      </div>
-
       <div className="mb-8">
-        <p className="text-gray-600">Browse your curated collection of favorite videos.</p>
-        
+        <p className="text-gray-600">
+          Browse your curated collection of favorite videos.
+        </p>
+
         {/* Filter Controls */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-medium">Filters:</span>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
             <div className="min-w-[200px]">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger data-testid="select-category-filter">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
@@ -116,7 +120,7 @@ export default function FavorPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="min-w-[200px]">
               <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger data-testid="select-type-filter">
@@ -132,7 +136,7 @@ export default function FavorPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             {(selectedCategory !== "all" || selectedType !== "all") && (
               <Button
                 variant="outline"
@@ -147,16 +151,21 @@ export default function FavorPage() {
             )}
           </div>
         </div>
-        
+
         {/* Results count */}
         <div className="text-sm text-gray-500 mb-4">
-          Showing {filteredVideos?.length || 0} of {favorVideos?.length || 0} videos
+          Showing {filteredVideos?.length || 0} of {favorVideos?.length || 0}{" "}
+          videos
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredVideos?.map((video) => (
-          <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-shadow" data-testid={`card-video-${video.id}`}>
+          <Card
+            key={video.id}
+            className="overflow-hidden hover:shadow-lg transition-shadow"
+            data-testid={`card-video-${video.id}`}
+          >
             <div className="relative aspect-video bg-gray-200">
               <img
                 src={getThumbnailUrl(video.youTubeLink)}
@@ -164,7 +173,8 @@ export default function FavorPage() {
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = "https://via.placeholder.com/320x180?text=Video+Thumbnail";
+                  target.src =
+                    "https://via.placeholder.com/320x180?text=Video+Thumbnail";
                 }}
               />
               <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center group">
@@ -180,7 +190,7 @@ export default function FavorPage() {
                 </Button>
               </div>
             </div>
-            
+
             <CardHeader className="pb-3">
               <CardTitle className="text-lg line-clamp-2" title={video.title}>
                 {video.title}
@@ -194,7 +204,7 @@ export default function FavorPage() {
                 </Badge>
               </div>
             </CardHeader>
-            
+
             {video.description && (
               <CardContent className="pt-0">
                 <CardDescription className="line-clamp-3">
@@ -202,7 +212,7 @@ export default function FavorPage() {
                 </CardDescription>
               </CardContent>
             )}
-            
+
             <CardContent className="pt-0 pb-4">
               <Button
                 variant="outline"
@@ -224,30 +234,35 @@ export default function FavorPage() {
           <div className="text-6xl mb-4">📺</div>
           <h3 className="text-xl font-semibold mb-2">No favorite videos yet</h3>
           <p className="text-gray-500">
-            Start adding your favorite videos through the admin panel to see them here.
+            Start adding your favorite videos through the admin panel to see
+            them here.
           </p>
         </div>
       )}
 
-      {favorVideos && favorVideos.length > 0 && filteredVideos?.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🔍</div>
-          <h3 className="text-xl font-semibold mb-2">No videos match your filters</h3>
-          <p className="text-gray-500 mb-4">
-            Try adjusting your category or type filters to see more videos.
-          </p>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setSelectedCategory("all");
-              setSelectedType("all");
-            }}
-            data-testid="button-clear-filters-empty"
-          >
-            Clear All Filters
-          </Button>
-        </div>
-      )}
+      {favorVideos &&
+        favorVideos.length > 0 &&
+        filteredVideos?.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold mb-2">
+              No videos match your filters
+            </h3>
+            <p className="text-gray-500 mb-4">
+              Try adjusting your category or type filters to see more videos.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedCategory("all");
+                setSelectedType("all");
+              }}
+              data-testid="button-clear-filters-empty"
+            >
+              Clear All Filters
+            </Button>
+          </div>
+        )}
     </div>
   );
 }

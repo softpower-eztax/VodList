@@ -40,7 +40,7 @@ export default function Header({
                 <i className="fas fa-play text-white text-lg"></i>
               </div>
               <span className="text-2xl font-bold text-dark">
-                My Youtube Home
+                My Youtube Home 2
               </span>
             </div>
 
