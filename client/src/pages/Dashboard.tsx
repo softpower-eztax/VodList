@@ -23,7 +23,7 @@ export default function Dashboard() {
   const { language, setLanguage } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
-  const [sortBy, setSortBy] = useState("popular");
+  const [sortBy, setSortBy] = useState("most_recent");
   const [loadedVideos, setLoadedVideos] = useState<VideoWithStats[]>([]);
   const [lastLoadedCategory, setLastLoadedCategory] = useState<string>("");
 
