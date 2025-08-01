@@ -114,8 +114,9 @@ export default function Dashboard() {
   }, [loadedVideos, lastLoadedCategory, activeCategory, searchQuery, sortBy]);
 
   const sortOptions = [
-    { value: "popular", labelKey: "most_popular" },
     { value: "recent", labelKey: "most_recent" },
+    { value: "popular", labelKey: "most_popular" },
+
     { value: "viewed", labelKey: "most_viewed" },
   ];
 
@@ -150,25 +151,6 @@ export default function Dashboard() {
             }
           }}
         />
-
-        {/* Stats Cards */}
-        {stats && !statsLoading && (
-          <StatsCards stats={stats} language={language} />
-        )}
-        {statsLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse"
-              >
-                <div className="bg-gray-200 h-6 rounded mb-2"></div>
-                <div className="bg-gray-200 h-8 rounded mb-4"></div>
-                <div className="bg-gray-200 h-4 rounded w-2/3"></div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Top Videos Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

@@ -23,7 +23,7 @@ export const translations: Translations = {
     other: "Other",
 
     // favor
-    favor_title: "Top Videos Dashboard",
+    favor_title: "Favorite Videos",
     favor_subtitle: "Browse your curated collection of favorite videos.",
 
     // Stats
@@ -197,8 +197,8 @@ export const translations: Translations = {
     other: "기타",
 
     // favor
-    favor_title: "인기 비디오 대시보드",
-    favor_subtitle: "큐레이션된 즐겨찾기 비디오 컬렉션을 탐색하세요.",
+    favor_title: "My 비디오",
+    favor_subtitle: "즐겨찾기 비디오 컬렉션을 탐색하세요.",
 
     // Stats
     total_videos: "총 비디오",

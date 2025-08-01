@@ -17,8 +17,9 @@ export default function Navigation() {
 
   const languageOptions = [
     { code: "en" as Language, flag: "🇺🇸", label: "EN" },
-    { code: "es" as Language, flag: "🇪🇸", label: "ES" },
+
     { code: "ko" as Language, flag: "🇰🇷", label: "KO" },
+    { code: "es" as Language, flag: "🇪🇸", label: "ES" },
   ];
 
   return (
