@@ -89,6 +89,46 @@ export default function FavorPage() {
 
   return (
     <div className="container mx-auto py-8">
+      {/* Navigation Header */}
+      <div className="bg-white border-b border-gray-200 -mx-8 -mt-8 mb-8 px-8 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-red-400 rounded-xl flex items-center justify-center">
+              <Heart className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">My Youtube Home</h1>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            {/* Language Selector */}
+            <div className="relative">
+              <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
+                <SelectTrigger className="flex items-center space-x-2 px-4 py-2 border-2 border-red-400 rounded-full bg-white hover:bg-gray-50 transition-colors w-auto">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl">
+                      {language === 'en' ? '🇺🇸' : language === 'es' ? '🇪🇸' : '🇰🇷'}
+                    </span>
+                    <span className="font-medium text-gray-800">
+                      {language.toUpperCase()}
+                    </span>
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">🇺🇸 EN</SelectItem>
+                  <SelectItem value="es">🇪🇸 ES</SelectItem>
+                  <SelectItem value="ko">🇰🇷 KO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Hamburger Menu */}
+            <button className="p-2">
+              <Menu className="w-6 h-6 text-gray-600" />
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="mb-8">
         <p className="text-gray-600">
           Browse your curated collection of favorite videos.
